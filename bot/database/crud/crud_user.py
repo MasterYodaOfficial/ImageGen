@@ -2,6 +2,7 @@ from sqlalchemy import select, func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from bot.database.models import User, Referral
+from bot.database.session import get_session
 from aiogram.types import User as TG_User
 import string
 import random
@@ -74,3 +75,11 @@ async def get_total_referral_rewards(session: AsyncSession, referral_code: str) 
     )
     total = result.scalar()
     return total or 0
+
+async def get_user(tg_user: TG_User) -> User:
+    async with get_session() as session:
+        result = await session.execute(
+            select(User).where(User.telegram_id == tg_user.id)
+        )
+        return result.scalar_one_or_none()
+

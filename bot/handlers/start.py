@@ -3,8 +3,12 @@ from aiogram.fsm.context import FSMContext
 from bot.database.session import get_session
 from bot.database.crud.crud_user import get_or_create_user
 from bot.utils.messages import start_text, start_text_trial
+import loguru
+
 
 async def start_command(message: Message, state: FSMContext):
+
+    loguru.logger.info(f"{message.from_user.id}, {message.from_user.first_name}")
     referral_code = None
     # Проверяем, есть ли аргументы в команде
     if message.text and len(message.text.split()) > 1:
@@ -18,5 +22,8 @@ async def start_command(message: Message, state: FSMContext):
         if new: # Если пользователь новый ставим сообщение о 3 бесплатных генерациях
             start_msg += start_text_trial
 
-        await message.answer(start_msg)
+        # image = FSInputFile("utils/hipic.jpg")
+        await message.answer(
+            text=start_msg
+        )
         await state.clear()

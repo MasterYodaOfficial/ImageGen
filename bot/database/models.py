@@ -21,7 +21,6 @@ class User(Base):
     referral_code = Column(String(20), unique=True, nullable=False) # Реферальный код пользователя
     invited_by_code = Column(String(20), ForeignKey('users.referral_code'), nullable=True) # Реферальный код пригласившего
 
-    # ✅ [ИСПРАВЛЕНО] Указан `foreign_keys`, чтобы избежать амбигуити
     inviter = relationship(
         'User',
         back_populates='invited_users',
@@ -30,7 +29,6 @@ class User(Base):
         primaryjoin='User.invited_by_code == User.referral_code'
     )
 
-    # ✅ [ИСПРАВЛЕНО] Явно указан `foreign_keys`
     invited_users = relationship(
         'User',
         back_populates='inviter',
@@ -38,7 +36,6 @@ class User(Base):
         primaryjoin='User.invited_by_code == User.referral_code'
     )
 
-    # ✅ [ИСПРАВЛЕНО] Добавлен явный primaryjoin
     referrals_given = relationship(
         'Referral',
         back_populates='inviter',
@@ -46,7 +43,6 @@ class User(Base):
         primaryjoin='User.referral_code == Referral.inviter_code'  # Явное указание условия связи
     )
 
-    # ✅ [ИСПРАВЛЕНО] Добавлен явный primaryjoin
     referral_info = relationship(
         'Referral',
         back_populates='invited_user',
@@ -79,16 +75,33 @@ class Referral(Base):
     reward_amount = Column(Integer, default=0)  # сколько бонусов выдали
     created_at = Column(DateTime, default=datetime.utcnow)
 
-    # ✅ [ИСПРАВЛЕНО] Упрощено определение связи
     inviter = relationship(
         'User',
         foreign_keys=[inviter_code],
         back_populates='referrals_given'  # Синхронизация с обратной связью
     )
 
-    # ✅ [ИСПРАВЛЕНО] Упрощено определение связи
     invited_user = relationship(
         'User',
         foreign_keys=[invited_user_id],
         back_populates='referral_info'  # Синхронизация с обратной связью
     )
+
+
+class Payment(Base):
+    __tablename__ = "payments"
+
+    id = Column(String, primary_key=True)  # например, UUID или ID от ЮKassa / крипто-платёжки
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    tariff_id = Column(String, ForeignKey("tariffs.id"), nullable=False)
+
+    amount = Column(Integer, nullable=False)  # сумма в рублях или центах/копейках
+    currency = Column(String(10), default="RUB")  # RUB / USDT / BTC и т.п.
+    status = Column(String(20), default="pending")  # pending / paid / failed / expired
+    payment_method = Column(String(30), nullable=True)  # yookassa / crypto / btc и т.д.
+
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    # Связи
+    user = relationship("User", backref="payments")
+    tariff = relationship("Tariff", backref="payments")
