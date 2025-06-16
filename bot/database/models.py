@@ -105,3 +105,19 @@ class Payment(Base):
     # Связи
     user = relationship("User", backref="payments")
     tariff = relationship("Tariff", backref="payments")
+
+
+class ImageGeneration(Base):
+    __tablename__ = 'image_generations'
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+
+    id_api = Column(String, nullable=False) # Уникальный ключ от API
+
+    prompt = Column(String, nullable=False)  # Запрос, который использовал пользователь
+    filename = Column(String, nullable=False)  # путь до изображения
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    # Связь с пользователем
+    user = relationship("User", backref="image_generations")

@@ -32,6 +32,7 @@ def make_tariff_buttons(tariffs: List[Tariff]) -> InlineKeyboardMarkup:
     return keyboard_builder.as_markup()
 
 def make_payment_buttons() -> InlineKeyboardMarkup:
+    """Кнопки для выбора способа оплаты"""
     kb = InlineKeyboardBuilder()
     kb.button(text="💳 ЮKassa", callback_data="yookassa")
     kb.button(text="🪙 Крипта", callback_data="crypto")
@@ -39,9 +40,27 @@ def make_payment_buttons() -> InlineKeyboardMarkup:
     return kb.as_markup()
 
 def make_pay_link_button(url: str = None) -> InlineKeyboardMarkup:
+    """Кнопка оплатить"""
     kb = InlineKeyboardBuilder()
     if not url:
         kb.button(text="💳 Оплатить", callback_data='pay')
     else:
         kb.button(text="💳 Оплатить", url=url)
+    return kb.as_markup()
+
+def make_formate_buttons() -> InlineKeyboardMarkup:
+    """Кнопка для выбора формата изображения"""
+    kb = InlineKeyboardBuilder()
+    kb.button(text="🧍 Вертикальный", callback_data="Вертикальный")
+    kb.button(text="🌄 Горизонтальный", callback_data="Горизонтальный")
+    kb.button(text="🔲 Квадратный", callback_data="Квадратный")
+    kb.adjust(1)
+    return kb.as_markup()
+
+def continue_prompt_buttons() -> InlineKeyboardMarkup:
+    """Кнопки для подтверждения генерации"""
+    kb = InlineKeyboardBuilder()
+    kb.button(text="Начать генерацию", callback_data="start_gen")
+    kb.button(text="Начать заново", callback_data="restart_gen")
+    kb.adjust(1)
     return kb.as_markup()
