@@ -113,11 +113,13 @@ class ImageGeneration(Base):
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
-    id_api = Column(String, nullable=False) # Уникальный ключ от API
+    id_api = Column(String, nullable=True) # Уникальный ключ от API
 
     prompt = Column(String, nullable=False)  # Запрос, который использовал пользователь
     filename = Column(String, nullable=False)  # путь до изображения
+    url = Column(String, nullable=True)  # ссылка на изображение
     created_at = Column(DateTime, default=datetime.utcnow)
-
+    status = Column(String(20), default="pending")  # pending / success / error
+    
     # Связь с пользователем
     user = relationship("User", backref="image_generations")

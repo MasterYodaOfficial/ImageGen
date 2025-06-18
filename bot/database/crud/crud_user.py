@@ -83,3 +83,34 @@ async def get_user(tg_user: TG_User) -> User:
         )
         return result.scalar_one_or_none()
 
+async def has_available_generations(tg_user: TG_User) -> bool:
+    """Проверяет, есть ли у пользователя хотя бы 1 доступная генерация"""
+    async with get_session() as session:
+        result = await session.execute(
+            select(User.counter).where(User.telegram_id == tg_user.id)
+        )
+        counter = result.scalar_one_or_none()
+        return counter is not None and counter > 0
+
+async def update_user_generations(tg_user: TG_User, delta: int) -> None:
+    """
+    Обновляет количество генераций у пользователя.
+    delta > 0 — добавить генерации
+    delta < 0 — потратить генерации (если хватает)
+    """
+    async with get_session() as session:
+        result = await session.execute(
+            select(User).where(User.telegram_id == tg_user.id)
+        )
+        user = result.scalar_one_or_none()
+        if not user:
+            raise ValueError("Пользователь не найден")
+
+        if delta < 0 and user.counter + delta < 0:
+            raise ValueError("Недостаточно генераций")
+
+        user.counter += delta
+        session.add(user)
+        await session.commit()
+
+

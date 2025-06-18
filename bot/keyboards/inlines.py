@@ -51,9 +51,9 @@ def make_pay_link_button(url: str = None) -> InlineKeyboardMarkup:
 def make_formate_buttons() -> InlineKeyboardMarkup:
     """Кнопка для выбора формата изображения"""
     kb = InlineKeyboardBuilder()
-    kb.button(text="🧍 Вертикальный", callback_data="Вертикальный")
-    kb.button(text="🌄 Горизонтальный", callback_data="Горизонтальный")
-    kb.button(text="🔲 Квадратный", callback_data="Квадратный")
+    kb.button(text="🧍 Вертикальный", callback_data="vertical")
+    kb.button(text="🌄 Горизонтальный", callback_data="horizontal")
+    kb.button(text="🔲 Квадратный", callback_data="square")
     kb.adjust(1)
     return kb.as_markup()
 

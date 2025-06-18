@@ -5,6 +5,7 @@ from bot.handlers.start import start_command
 from bot.handlers.buy import buy_command, get_tariff_id_inline, choose_payment_method, payment_done_test
 from bot.handlers.profile import profile_command
 from bot.handlers.generate import generate_command, get_format_image, get_prompt, get_confirm_generation
+from bot.handlers.about import about_command
 
 
 from aiogram.client.default import DefaultBotProperties
@@ -31,6 +32,7 @@ async def run_bot() -> None:
     dp.message.register(buy_command, Command('buy'))
     dp.message.register(profile_command, Command('profile'))
     dp.message.register(generate_command, Command('generate'))
+    dp.message.register(about_command, Command('about'))
 
     # Колбеки покупки
     dp.callback_query.register(get_tariff_id_inline, StepForm.CHOOSING_TARIFF)
