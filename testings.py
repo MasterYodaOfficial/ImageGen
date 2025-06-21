@@ -30,5 +30,5 @@ image_bytes = base64.b64decode(image_base64)
 # image_url = result2.data[0].url
 # print(image_url)
 
-with open("image_low_.jpeg", "wb") as f:
+with open("bot/generated/image_low_.jpeg", "wb") as f:
     f.write(image_bytes)

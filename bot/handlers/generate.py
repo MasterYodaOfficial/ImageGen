@@ -1,5 +1,6 @@
 from aiogram.types import Message, CallbackQuery, FSInputFile
 from aiogram.fsm.context import FSMContext
+from aiogram.exceptions import TelegramBadRequest
 from bot.utils.statesforms import StepForm
 from bot.utils.messages import (choosing_format_message, enter_prompt_message, attention_prompt_message,
                                 continue_prompt_message, out_of_generations)
@@ -7,7 +8,8 @@ from bot.keyboards.inlines import make_formate_buttons, continue_prompt_buttons
 from bot.database.crud.crud_generations import create_image_generation, update_image_generation_status
 from bot.database.crud.crud_user import has_available_generations, update_user_generations
 import loguru
-from testing_3 import free_generate, ImageMode
+from bot.utils.image_gen_api import generate_image_stream, ImageMode
+# from testing_3 import free_generate, ImageMode
 from bot.utils.utils import download_file
 
 
@@ -54,14 +56,20 @@ async def get_prompt(message: Message, state: FSMContext):
     prompt = message.text.strip()
 
     message_id = user_data.get("cur_message_id")
+    await message.delete()
     if len(prompt) > max_prompt_length:
-        await message.bot.edit_message_text(
-            chat_id=message.chat.id,
-            message_id=message_id,
-            text=attention_prompt_message
-        )
-        await message.delete()
-        return
+        try:
+            await message.bot.edit_message_text(
+                chat_id=message.chat.id,
+                message_id=message_id,
+                text=attention_prompt_message
+            )
+
+            return
+        except TelegramBadRequest as ex:
+            loguru.logger.debug(f"{ex}")
+            return
+
 
     # Сохраняем промт
     await state.update_data(prompt=prompt)
@@ -77,7 +85,6 @@ async def get_prompt(message: Message, state: FSMContext):
         ),
         reply_markup=continue_prompt_buttons()
     )
-    await message.delete()
     await state.set_state(StepForm.CONFIRM_GENERATION)
 
 async def get_confirm_generation(call: CallbackQuery, state: FSMContext):
@@ -86,7 +93,6 @@ async def get_confirm_generation(call: CallbackQuery, state: FSMContext):
 
     loguru.logger.info(f"{call.from_user.id}, {call.from_user.first_name}")
 
-    # TODO Тут нужно добавить где у пользователя списывается с баланса генерация
     data_user = await state.get_data()
     prompt = data_user.get('prompt')
     format_image = data_user.get('format_image')
@@ -94,7 +100,11 @@ async def get_confirm_generation(call: CallbackQuery, state: FSMContext):
         generation = await create_image_generation(call.from_user, prompt)
         await call.message.edit_text("⏳ (от 0 до 2 мин.) Генерируем изображение...")
         try:
-            image_url = await free_generate(
+            # image_url = await free_generate(
+            #     prompt=prompt,
+            #     mode=ImageMode(format_image)
+            # )
+            image_url = await generate_image_stream(
                 prompt=prompt,
                 mode=ImageMode(format_image)
             )
