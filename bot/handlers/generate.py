@@ -8,7 +8,7 @@ from bot.keyboards.inlines import make_formate_buttons, continue_prompt_buttons
 from bot.database.crud.crud_generations import create_image_generation, update_image_generation_status
 from bot.database.crud.crud_user import has_available_generations, update_user_generations
 import loguru
-from bot.utils.image_gen_api import generate_image_stream, ImageMode
+from bot.services.image_gen_api import generate_image_stream, ImageMode
 # from testing_3 import free_generate, ImageMode
 from bot.utils.utils import download_file
 
@@ -120,7 +120,7 @@ async def get_confirm_generation(call: CallbackQuery, state: FSMContext):
             )
             await update_user_generations(call.from_user, -1)
         except Exception as ex:
-            loguru.logger.exception("Ошибка генерации")
+            loguru.logger.exception(ex)
             await update_image_generation_status(generation.id, "error")
             await call.message.answer("❌ Произошла ошибка при генерации изображения. Попробуйте ещё раз.")
         await call.message.delete()

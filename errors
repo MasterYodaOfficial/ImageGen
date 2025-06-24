@@ -1,0 +1,306 @@
+/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/bin/python /home/yoda/PycharmProjects/PythonProject/ImageAIGen/bot/main.py
+2025-06-18 20:58:11.219 | INFO     | utils.settings:run_bot:48 - Запуск бота
+2025-06-18 20:58:11.641 | INFO     | bot.handlers.start:start_command:11 - 1657478732, Татьяна
+2025-06-18 20:58:11.643 | INFO     | bot.handlers.start:start_command:11 - 720228185, Анастасия l BERRY JOY 🍓l
+2025-06-18 20:58:11.643 | INFO     | bot.handlers.start:start_command:11 - 720228185, Анастасия l BERRY JOY 🍓l
+2025-06-18 20:58:11.644 | INFO     | bot.handlers.start:start_command:11 - 720228185, Анастасия l BERRY JOY 🍓l
+2025-06-18 20:58:11.644 | INFO     | bot.handlers.generate:generate_command:18 - 720228185, Анастасия l BERRY JOY 🍓l
+2025-06-18 20:58:31.603 | INFO     | bot.handlers.generate:generate_command:18 - 758107031, Евгений
+2025-06-18 20:58:33.548 | INFO     | bot.handlers.generate:get_format_image:35 - 758107031, Евгений
+2025-06-18 20:59:32.633 | INFO     | bot.handlers.start:start_command:11 - 758107031, Евгений
+2025-06-18 21:08:41.174 | INFO     | bot.handlers.start:start_command:11 - 1657478732, Татьяна
+2025-06-18 21:21:45.512 | INFO     | bot.handlers.start:start_command:11 - 758107031, Евгений
+2025-06-18 21:21:47.765 | INFO     | bot.handlers.generate:generate_command:18 - 758107031, Евгений
+2025-06-18 21:21:50.123 | INFO     | bot.handlers.generate:get_format_image:35 - 758107031, Евгений
+2025-06-18 21:22:32.207 | INFO     | bot.handlers.generate:get_prompt:51 - 758107031, Евгений
+2025-06-18 21:22:34.976 | INFO     | bot.handlers.generate:get_confirm_generation:88 - 758107031, Евгений
+2025-06-18 21:27:35.595 | ERROR    | bot.handlers.generate:get_confirm_generation:117 - Ошибка генерации
+Traceback (most recent call last):
+
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiohttp/streams.py", line 347, in _wait
+    await waiter
+          └ <Future cancelled>
+
+asyncio.exceptions.CancelledError
+
+
+The above exception was the direct cause of the following exception:
+
+
+Traceback (most recent call last):
+
+  File "/home/yoda/PycharmProjects/PythonProject/ImageAIGen/bot/main.py", line 7, in <module>
+    asyncio.run(run_bot())
+    │       │   └ <function run_bot at 0x76587d1799e0>
+    │       └ <function run at 0x765881a8c680>
+    └ <module 'asyncio' from '/usr/lib/python3.12/asyncio/__init__.py'>
+
+  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
+    return runner.run(main)
+           │      │   └ <coroutine object run_bot at 0x765881a439f0>
+           │      └ <function Runner.run at 0x76587ffff920>
+           └ <asyncio.runners.Runner object at 0x7658808a3170>
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           │    │     │                  └ <Task pending name='Task-1' coro=<run_bot() running at /home/yoda/PycharmProjects/PythonProject/ImageAIGen/bot/utils/settings...
+           │    │     └ <function BaseEventLoop.run_until_complete at 0x76587fffd580>
+           │    └ <_UnixSelectorEventLoop running=True closed=False debug=False>
+           └ <asyncio.runners.Runner object at 0x7658808a3170>
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 674, in run_until_complete
+    self.run_forever()
+    │    └ <function BaseEventLoop.run_forever at 0x76587fffd4e0>
+    └ <_UnixSelectorEventLoop running=True closed=False debug=False>
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 641, in run_forever
+    self._run_once()
+    │    └ <function BaseEventLoop._run_once at 0x76587ffff2e0>
+    └ <_UnixSelectorEventLoop running=True closed=False debug=False>
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 1987, in _run_once
+    handle._run()
+    │      └ <function Handle._run at 0x76587ff49800>
+    └ <Handle <_asyncio.TaskStepMethWrapper object at 0x76587ce0d960>()>
+  File "/usr/lib/python3.12/asyncio/events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+    │    │            │    │           │    └ <member '_args' of 'Handle' objects>
+    │    │            │    │           └ <Handle <_asyncio.TaskStepMethWrapper object at 0x76587ce0d960>()>
+    │    │            │    └ <member '_callback' of 'Handle' objects>
+    │    │            └ <Handle <_asyncio.TaskStepMethWrapper object at 0x76587ce0d960>()>
+    │    └ <member '_context' of 'Handle' objects>
+    └ <Handle <_asyncio.TaskStepMethWrapper object at 0x76587ce0d960>()>
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiogram/dispatcher/dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+                     │    │           │    │         └ {'dispatcher': <Dispatcher '0x7658808a38f0'>, 'bots': (<aiogram.client.bot.Bot object at 0x76587d16e600>,)}
+                     │    │           │    └ Update(update_id=309149212, message=None, edited_message=None, channel_post=None, edited_channel_post=None, business_connecti...
+                     │    │           └ <aiogram.client.bot.Bot object at 0x76587d16e600>
+                     │    └ <function Dispatcher.feed_update at 0x76587dee13a0>
+                     └ <Dispatcher '0x7658808a38f0'>
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiogram/dispatcher/dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+                     │    │      └ <function TelegramEventObserver.wrap_outer_middleware at 0x76587dec3d80>
+                     │    └ <aiogram.dispatcher.event.telegram.TelegramEventObserver object at 0x76587d16e390>
+                     └ <Dispatcher '0x7658808a38f0'>
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiogram/dispatcher/middlewares/error.py", line 25, in __call__
+    return await handler(event, data)
+                 │       │      └ {'dispatcher': <Dispatcher '0x7658808a38f0'>, 'bots': (<aiogram.client.bot.Bot object at 0x76587d16e600>,), 'bot': <aiogram.c...
+                 │       └ Update(update_id=309149212, message=None, edited_message=None, channel_post=None, edited_channel_post=None, business_connecti...
+                 └ functools.partial(<aiogram.dispatcher.middlewares.user_context.UserContextMiddleware object at 0x76587d16cf50>, functools.par...
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 56, in __call__
+    return await handler(event, data)
+                 │       │      └ {'dispatcher': <Dispatcher '0x7658808a38f0'>, 'bots': (<aiogram.client.bot.Bot object at 0x76587d16e600>,), 'bot': <aiogram.c...
+                 │       └ Update(update_id=309149212, message=None, edited_message=None, channel_post=None, edited_channel_post=None, business_connecti...
+                 └ functools.partial(<aiogram.fsm.middleware.FSMContextMiddleware object at 0x76587d16e540>, <function TelegramEventObserver.tri...
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiogram/fsm/middleware.py", line 42, in __call__
+    return await handler(event, data)
+                 │       │      └ {'dispatcher': <Dispatcher '0x7658808a38f0'>, 'bots': (<aiogram.client.bot.Bot object at 0x76587d16e600>,), 'bot': <aiogram.c...
+                 │       └ Update(update_id=309149212, message=None, edited_message=None, channel_post=None, edited_channel_post=None, business_connecti...
+                 └ <function TelegramEventObserver.trigger at 0x76588084be20>
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiogram/dispatcher/event/telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+                 │             │      └ {'dispatcher': <Dispatcher '0x7658808a38f0'>, 'bots': (<aiogram.client.bot.Bot object at 0x76587d16e600>,), 'bot': <aiogram.c...
+                 │             └ Update(update_id=309149212, message=None, edited_message=None, channel_post=None, edited_channel_post=None, business_connecti...
+                 └ <function CallableObject.call at 0x76587d17b1a0>
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+                 └ functools.partial(<bound method Dispatcher._listen_update of <Dispatcher '0x7658808a38f0'>>, Update(update_id=309149212, mess...
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiogram/dispatcher/dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+                 │    │                           │                  │        └ {'dispatcher': <Dispatcher '0x7658808a38f0'>, 'bots': (<aiogram.client.bot.Bot object at 0x76587d16e600>,), 'bot': <aiogram.c...
+                 │    │                           │                  └ CallbackQuery(id='3256044908478398552', from_user=User(id=758107031, is_bot=False, first_name='Евгений', last_name=None, user...
+                 │    │                           └ 'callback_query'
+                 │    └ <function Router.propagate_event at 0x76587dee09a0>
+                 └ <Dispatcher '0x7658808a38f0'>
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiogram/dispatcher/router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+                 │        │                     │               │           └ {'dispatcher': <Dispatcher '0x7658808a38f0'>, 'bots': (<aiogram.client.bot.Bot object at 0x76587d16e600>,), 'bot': <aiogram.c...
+                 │        │                     │               └ CallbackQuery(id='3256044908478398552', from_user=User(id=758107031, is_bot=False, first_name='Евгений', last_name=None, user...
+                 │        │                     └ <function Router.propagate_event.<locals>._wrapped at 0x76587d17bd80>
+                 │        └ <function TelegramEventObserver.wrap_outer_middleware at 0x76587dec3d80>
+                 └ <aiogram.dispatcher.event.telegram.TelegramEventObserver object at 0x76587d16d550>
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiogram/dispatcher/router.py", line 141, in _wrapped
+    return await self._propagate_event(
+                 │    └ <function Router._propagate_event at 0x76587dee0a40>
+                 └ <Dispatcher '0x7658808a38f0'>
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiogram/dispatcher/router.py", line 166, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+                     │        │       │        └ {'dispatcher': <Dispatcher '0x7658808a38f0'>, 'bots': (<aiogram.client.bot.Bot object at 0x76587d16e600>,), 'bot': <aiogram.c...
+                     │        │       └ CallbackQuery(id='3256044908478398552', from_user=User(id=758107031, is_bot=False, first_name='Евгений', last_name=None, user...
+                     │        └ <function TelegramEventObserver.trigger at 0x76587dec3ec0>
+                     └ <aiogram.dispatcher.event.telegram.TelegramEventObserver object at 0x76587d16d550>
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiogram/dispatcher/event/telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+                 │             │      └ {'dispatcher': <Dispatcher '0x7658808a38f0'>, 'bots': (<aiogram.client.bot.Bot object at 0x76587d16e600>,), 'bot': <aiogram.c...
+                 │             └ CallbackQuery(id='3256044908478398552', from_user=User(id=758107031, is_bot=False, first_name='Евгений', last_name=None, user...
+                 └ <function CallableObject.call at 0x76587ceb3b00>
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+                 └ functools.partial(<function get_confirm_generation at 0x76587d178680>, CallbackQuery(id='3256044908478398552', from_user=User...
+
+> File "/home/yoda/PycharmProjects/PythonProject/ImageAIGen/bot/handlers/generate.py", line 101, in get_confirm_generation
+    image_url = await generate_image_stream(
+                      └ <function generate_image_stream at 0x76587d1782c0>
+
+  File "/home/yoda/PycharmProjects/PythonProject/ImageAIGen/bot/utils/image_gen_api.py", line 42, in generate_image_stream
+    async for line in response.content:
+              │       │        └ <StreamReader e=ClientConnectionError('Connection closed')>
+              │       └ <ClientResponse(https://neuroimg.art/api/v1/generate) [200 OK]>
+              │         <CIMultiDictProxy('Cache-Control': 'no-store, no-cache, must-...
+              └ b'{"status": "WAITING", "job_id": "876137930605783281", "queue_position": 1, "queue_total": 1}\n'
+
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiohttp/streams.py", line 52, in __anext__
+    rv = await self.read_func()
+               │    └ <member 'read_func' of 'AsyncStreamIterator' objects>
+               └ <aiohttp.streams.AsyncStreamIterator object at 0x76587ce495d0>
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiohttp/streams.py", line 352, in readline
+    return await self.readuntil()
+                 │    └ <function StreamReader.readuntil at 0x76587e2c16c0>
+                 └ <StreamReader e=ClientConnectionError('Connection closed')>
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiohttp/streams.py", line 386, in readuntil
+    await self._wait("readuntil")
+          │    └ <function StreamReader._wait at 0x76587e2c1580>
+          └ <StreamReader e=ClientConnectionError('Connection closed')>
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiohttp/streams.py", line 346, in _wait
+    with self._timer:
+         │    └ <member '_timer' of 'StreamReader' objects>
+         └ <StreamReader e=ClientConnectionError('Connection closed')>
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiohttp/helpers.py", line 685, in __exit__
+    raise asyncio.TimeoutError from exc_val
+          │       │                 └ CancelledError()
+          │       └ <class 'TimeoutError'>
+          └ <module 'asyncio' from '/usr/lib/python3.12/asyncio/__init__.py'>
+
+TimeoutError
+2025-06-18 21:28:17.490 | INFO     | bot.handlers.generate:generate_command:18 - 758107031, Евгений
+2025-06-18 21:28:20.772 | INFO     | bot.handlers.generate:get_format_image:35 - 758107031, Евгений
+2025-06-18 21:28:51.270 | INFO     | bot.handlers.generate:get_prompt:51 - 758107031, Евгений
+2025-06-18 21:28:53.025 | INFO     | bot.handlers.generate:get_confirm_generation:88 - 758107031, Евгений
+2025-06-18 21:29:39.307 | INFO     | bot.handlers.generate:generate_command:18 - 861039738, Артур
+2025-06-18 21:29:44.732 | INFO     | bot.handlers.start:start_command:11 - 861039738, Артур
+2025-06-18 21:29:47.395 | INFO     | bot.handlers.buy:buy_command:21 - 861039738, Артур
+2025-06-18 21:29:50.163 | INFO     | bot.handlers.buy:get_tariff_id_inline:41 - 861039738, Артур
+2025-06-18 21:29:52.619 | INFO     | bot.handlers.buy:choose_payment_method:55 - 861039738, Артур
+2025-06-18 21:29:54.262 | INFO     | bot.handlers.buy:payment_done_test:90 - 861039738, Артур
+2025-06-18 21:29:57.843 | INFO     | bot.handlers.generate:generate_command:18 - 861039738, Артур
+2025-06-18 21:39:21.645 | INFO     | bot.handlers.generate:generate_command:18 - 758107031, Евгений
+2025-06-18 21:39:24.399 | INFO     | bot.handlers.generate:get_format_image:35 - 758107031, Евгений
+2025-06-18 21:40:00.039 | INFO     | bot.handlers.generate:get_prompt:51 - 758107031, Евгений
+2025-06-18 21:40:02.195 | INFO     | bot.handlers.generate:get_confirm_generation:88 - 758107031, Евгений
+2025-06-18 21:54:18.309 | INFO     | bot.handlers.generate:generate_command:18 - 758107031, Евгений
+2025-06-18 21:54:19.233 | INFO     | bot.handlers.generate:generate_command:18 - 861039738, Артур
+2025-06-18 21:54:21.383 | INFO     | bot.handlers.generate:get_format_image:35 - 861039738, Артур
+2025-06-18 21:54:32.339 | INFO     | bot.handlers.generate:get_prompt:51 - 861039738, Артур
+2025-06-18 21:54:37.973 | INFO     | bot.handlers.generate:get_confirm_generation:88 - 861039738, Артур
+2025-06-18 21:55:35.419 | INFO     | bot.handlers.generate:generate_command:18 - 861039738, Артур
+2025-06-18 21:55:39.755 | INFO     | bot.handlers.generate:get_format_image:35 - 861039738, Артур
+2025-06-18 21:57:23.148 | INFO     | bot.handlers.generate:get_prompt:51 - 861039738, Артур
+2025-06-18 21:57:25.196 | INFO     | bot.handlers.generate:get_confirm_generation:88 - 861039738, Артур
+2025-06-18 21:59:09.132 | INFO     | bot.handlers.generate:generate_command:18 - 518211635, Vitaly
+2025-06-18 21:59:11.079 | INFO     | bot.handlers.generate:get_format_image:35 - 518211635, Vitaly
+2025-06-18 21:59:53.267 | INFO     | bot.handlers.generate:get_prompt:51 - 518211635, Vitaly
+2025-06-18 21:59:57.466 | INFO     | bot.handlers.generate:get_confirm_generation:88 - 518211635, Vitaly
+2025-06-18 22:00:42.011 | INFO     | bot.handlers.generate:generate_command:18 - 861039738, Артур
+2025-06-18 22:00:43.550 | INFO     | bot.handlers.generate:get_format_image:35 - 861039738, Артур
+2025-06-18 22:00:47.231 | INFO     | bot.handlers.generate:get_prompt:51 - 861039738, Артур
+2025-06-18 22:00:56.372 | INFO     | bot.handlers.generate:get_confirm_generation:88 - 861039738, Артур
+2025-06-18 22:03:08.545 | INFO     | bot.handlers.generate:generate_command:18 - 518211635, Vitaly
+2025-06-18 22:03:10.081 | INFO     | bot.handlers.generate:get_format_image:35 - 518211635, Vitaly
+2025-06-18 22:03:12.540 | INFO     | bot.handlers.generate:get_prompt:51 - 518211635, Vitaly
+2025-06-18 22:03:31.484 | INFO     | bot.handlers.generate:get_prompt:51 - 518211635, Vitaly
+Cause exception while process update id=309149248 by bot id=7652339388
+TelegramBadRequest: Telegram server says - Bad Request: message is not modified: specified new message content and reply markup are exactly the same as a current content and reply markup of the message
+Traceback (most recent call last):
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiogram/dispatcher/dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiogram/dispatcher/dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiogram/dispatcher/middlewares/error.py", line 25, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 56, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiogram/fsm/middleware.py", line 42, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiogram/dispatcher/event/telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiogram/dispatcher/dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiogram/dispatcher/router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiogram/dispatcher/router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiogram/dispatcher/router.py", line 166, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiogram/dispatcher/event/telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "/home/yoda/PycharmProjects/PythonProject/ImageAIGen/bot/handlers/generate.py", line 59, in get_prompt
+    await message.bot.edit_message_text(
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiogram/client/bot.py", line 1509, in edit_message_text
+    return await self(call, request_timeout=request_timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiogram/client/bot.py", line 478, in __call__
+    return await self.session(self, method, timeout=request_timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiogram/client/session/base.py", line 254, in __call__
+    return cast(TelegramType, await middleware(bot, method))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiogram/client/session/aiohttp.py", line 185, in make_request
+    response = self.check_response(
+               ^^^^^^^^^^^^^^^^^^^^
+  File "/home/yoda/PycharmProjects/PythonProject/PythonProject/.venv/lib/python3.12/site-packages/aiogram/client/session/base.py", line 120, in check_response
+    raise TelegramBadRequest(method=method, message=description)
+aiogram.exceptions.TelegramBadRequest: Telegram server says - Bad Request: message is not modified: specified new message content and reply markup are exactly the same as a current content and reply markup of the message
+2025-06-18 22:03:39.060 | INFO     | bot.handlers.generate:generate_command:18 - 518211635, Vitaly
+2025-06-18 22:03:42.544 | INFO     | bot.handlers.generate:get_format_image:35 - 518211635, Vitaly
+2025-06-18 22:03:57.753 | INFO     | bot.handlers.generate:get_prompt:51 - 518211635, Vitaly
+2025-06-18 22:04:03.338 | INFO     | bot.handlers.generate:generate_command:18 - 518211635, Vitaly
+2025-06-18 22:04:04.867 | INFO     | bot.handlers.generate:get_format_image:35 - 518211635, Vitaly
+2025-06-18 22:04:24.629 | INFO     | bot.handlers.generate:get_prompt:51 - 518211635, Vitaly
+2025-06-18 22:04:26.885 | INFO     | bot.handlers.generate:get_confirm_generation:88 - 518211635, Vitaly
+2025-06-18 22:04:55.555 | INFO     | bot.handlers.generate:generate_command:18 - 861039738, Артур
+2025-06-18 22:04:58.730 | INFO     | bot.handlers.generate:get_format_image:35 - 861039738, Артур
+2025-06-18 22:05:43.375 | INFO     | bot.handlers.generate:get_prompt:51 - 861039738, Артур
+2025-06-18 22:05:44.912 | INFO     | bot.handlers.generate:get_confirm_generation:88 - 861039738, Артур
+2025-06-18 22:09:45.552 | INFO     | bot.handlers.generate:generate_command:18 - 518211635, Vitaly
+2025-06-18 22:09:47.192 | INFO     | bot.handlers.generate:get_format_image:35 - 518211635, Vitaly
+2025-06-18 22:09:58.486 | INFO     | bot.handlers.generate:get_format_image:35 - 758107031, Евгений
+2025-06-18 22:10:10.171 | INFO     | bot.handlers.generate:get_prompt:51 - 518211635, Vitaly
+2025-06-18 22:10:22.010 | INFO     | bot.handlers.generate:get_confirm_generation:88 - 518211635, Vitaly
+2025-06-18 22:14:13.944 | INFO     | bot.handlers.generate:generate_command:18 - 861039738, Артур
+2025-06-18 22:14:17.222 | INFO     | bot.handlers.generate:get_format_image:35 - 861039738, Артур
+2025-06-18 22:14:26.376 | INFO     | bot.handlers.generate:get_prompt:51 - 861039738, Артур
+2025-06-18 22:14:27.258 | INFO     | bot.handlers.generate:get_confirm_generation:88 - 861039738, Артур
+2025-06-18 22:14:27.975 | INFO     | bot.handlers.generate:get_format_image:35 - 861039738, Артур
+2025-06-18 22:14:28.490 | INFO     | bot.handlers.generate:generate_command:18 - 518211635, Vitaly
+2025-06-18 22:14:30.329 | INFO     | bot.handlers.generate:get_format_image:35 - 518211635, Vitaly
+2025-06-18 22:14:38.727 | INFO     | bot.handlers.generate:get_prompt:51 - 861039738, Артур
+2025-06-18 22:14:40.467 | INFO     | bot.handlers.generate:get_confirm_generation:88 - 861039738, Артур
+2025-06-18 22:14:52.960 | INFO     | bot.handlers.generate:get_prompt:51 - 518211635, Vitaly
+2025-06-18 22:14:55.518 | INFO     | bot.handlers.generate:get_confirm_generation:88 - 518211635, Vitaly
+2025-06-18 22:17:27.670 | INFO     | bot.handlers.generate:generate_command:18 - 861039738, Артур
+2025-06-18 22:19:26.352 | INFO     | bot.handlers.generate:generate_command:18 - 861039738, Артур
+2025-06-18 22:19:30.984 | INFO     | bot.handlers.buy:buy_command:21 - 861039738, Артур
+2025-06-18 22:19:32.905 | INFO     | bot.handlers.buy:get_tariff_id_inline:41 - 861039738, Артур
+2025-06-18 22:19:34.231 | INFO     | bot.handlers.buy:choose_payment_method:55 - 861039738, Артур
+2025-06-18 22:19:35.568 | INFO     | bot.handlers.buy:payment_done_test:90 - 861039738, Артур
+2025-06-18 22:19:39.150 | INFO     | bot.handlers.generate:generate_command:18 - 861039738, Артур
+2025-06-18 22:19:41.199 | INFO     | bot.handlers.generate:get_format_image:35 - 861039738, Артур
+2025-06-18 22:19:43.860 | INFO     | bot.handlers.generate:get_prompt:51 - 861039738, Артур
+2025-06-18 22:19:45.499 | INFO     | bot.handlers.generate:get_confirm_generation:88 - 861039738, Артур
+2025-06-18 22:23:35.276 | INFO     | bot.handlers.generate:generate_command:18 - 861039738, Артур
+2025-06-18 22:23:36.711 | INFO     | bot.handlers.generate:get_format_image:35 - 861039738, Артур
+2025-06-18 22:23:52.990 | INFO     | bot.handlers.generate:get_prompt:51 - 861039738, Артур
+2025-06-18 22:23:54.323 | INFO     | bot.handlers.generate:get_confirm_generation:88 - 861039738, Артур

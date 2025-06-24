@@ -91,7 +91,7 @@ class Referral(Base):
 class Payment(Base):
     __tablename__ = "payments"
 
-    id = Column(String, primary_key=True)  # например, UUID или ID от ЮKassa / крипто-платёжки
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     tariff_id = Column(String, ForeignKey("tariffs.id"), nullable=False)
 
@@ -99,6 +99,7 @@ class Payment(Base):
     currency = Column(String(10), default="RUB")  # RUB / USDT / BTC и т.п.
     status = Column(String(20), default="pending")  # pending / paid / failed / expired
     payment_method = Column(String(30), nullable=True)  # yookassa / crypto / btc и т.д.
+    external_id = Column(String, nullable=True) # Индивидуальный идентификатор платежа
 
     created_at = Column(DateTime, default=datetime.utcnow)
 

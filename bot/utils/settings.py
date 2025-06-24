@@ -2,7 +2,7 @@ from aiogram import Dispatcher, Bot, F
 import loguru
 
 from bot.handlers.start import start_command
-from bot.handlers.buy import buy_command, get_tariff_id_inline, choose_payment_method, payment_done_test
+from bot.handlers.buy import buy_command, get_tariff_id_inline, choose_payment_method
 from bot.handlers.profile import profile_command
 from bot.handlers.generate import generate_command, get_format_image, get_prompt, get_confirm_generation
 from bot.handlers.about import about_command
@@ -11,12 +11,17 @@ from bot.handlers.about import about_command
 from aiogram.client.default import DefaultBotProperties
 from aiogram.filters import Command
 
-from bot.utils.keys import BOT_TOKEN
+
+from bot.utils.keys import BOT_TOKEN, YOOKASSA_SECRET_KEY, YOOKASSA_SHOP_ID
 from bot.utils.commands import set_commands
 from bot.utils.utils import start_bot
-
 from bot.utils.statesforms import StepForm
 
+from yookassa import Configuration
+
+
+Configuration.account_id = YOOKASSA_SHOP_ID
+Configuration.secret_key = YOOKASSA_SECRET_KEY
 dp = Dispatcher()
 bot = Bot(BOT_TOKEN, default=DefaultBotProperties(parse_mode='HTML'))
 
@@ -37,7 +42,6 @@ async def run_bot() -> None:
     # Колбеки покупки
     dp.callback_query.register(get_tariff_id_inline, StepForm.CHOOSING_TARIFF)
     dp.callback_query.register(choose_payment_method, StepForm.CHOOSING_PAYMENT_METHOD)
-    dp.callback_query.register(payment_done_test, StepForm.CONFIRM_PURCHASE)
 
     # Колбеки генерации и отлов промта для генерации
     dp.callback_query.register(get_format_image, StepForm.CHOOSE_IMAGE_FORMAT)

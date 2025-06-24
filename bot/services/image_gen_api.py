@@ -29,10 +29,11 @@ async def generate_image_stream(prompt: str, mode: ImageMode = ImageMode.square,
     width, height = get_image_size(mode)
     payload = {
         "token": api_key,
-        "model": "epiCRealismXL-VXVI-LastFAME",
+        "model": "RealisticVision-V4fp8_e4m3fn",
         "prompt": prompt,
         "width": width,
         "height": height,
+        "sampler": "DPM++ 2M Karras",
         "steps": 35,
         "stream": True
     }

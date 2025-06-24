@@ -2,16 +2,19 @@ from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 from bot.database.session import get_session
 from bot.database.models import Tariff
-from bot.database.crud.crud_user import get_or_create_user
+from bot.database.crud.crud_user import get_or_create_user, get_user
 from bot.utils.messages import buy_message, get_tariff_id_inline_message, confirm_purchase_message
 from bot.database.crud.crud_tariffs import get_active_tariffs
 from bot.keyboards.inlines import make_tariff_buttons, make_payment_buttons, make_pay_link_button
 from bot.utils.statesforms import StepForm
 
-from bot.database.crud.crud_payments import create_payment, confirm_payment
+from bot.services.payment_service import create_payment_service, get_payment_status
 from bot.database.crud.crud_tariffs import get_tariff_by_id
-from bot.database.crud.crud_user import get_user
+from bot.database.crud.crud_payments import confirm_payment, error_payment
 import loguru
+import asyncio
+import time
+
 
 
 async def buy_command(message: Message, state: FSMContext):
@@ -50,7 +53,8 @@ async def get_tariff_id_inline(call: CallbackQuery, state: FSMContext):
 
 async def choose_payment_method(call: CallbackQuery, state: FSMContext):
 
-    """Принимает кнопку выбора метода оплаты отправляет ссылку на оплату"""
+    """Принимает кнопку выбора метода оплаты отправляет ссылку на оплату, ждет оплату и
+    при оплате отправляет сообщение об успешной оплате"""
 
     loguru.logger.info(f"{call.from_user.id}, {call.from_user.first_name}")
 
@@ -64,6 +68,7 @@ async def choose_payment_method(call: CallbackQuery, state: FSMContext):
     tariff = await get_tariff_by_id(tariff_id)
 
     user = await get_user(call.from_user)
+    payment, pay_url = await create_payment_service(user, tariff, payment_method)
 
     await call.message.edit_text(
         text=confirm_purchase_message.format(
@@ -71,30 +76,21 @@ async def choose_payment_method(call: CallbackQuery, state: FSMContext):
             price=tariff.price_rub,
             method=payment_method
         ),
-        reply_markup=make_pay_link_button()
+        reply_markup=make_pay_link_button(pay_url)
     )
-    payment = await create_payment(
-        user_id=user.id,
-        tariff_id=tariff.id,
-        amount=tariff.generation_amount,
-        method=payment_method
-    )
-    await state.update_data(payment_id=payment.id)
-    await state.set_state(StepForm.CONFIRM_PURCHASE)
-
-async def payment_done_test(call: CallbackQuery, state: FSMContext):
-
-    """Тестово типа приняли оплату тут сохраняется история в БД. У пользователя добавляется кол-во запросов,
-    создается история в payment"""
-
-    loguru.logger.info(f"{call.from_user.id}, {call.from_user.first_name}")
-
-    data = await state.get_data()
-
-    payment_id = data['payment_id']
-    payment = await confirm_payment(payment_id)
-    if payment:
-        await call.message.edit_text("Оплата получена, кол-во запросов для генерации добавлено. Можно проверить в /profile")
-    else:
-        await call.message.edit_text("Произошла какая то херня надо чекать")
-    await state.clear()
+    await state.set_state(StepForm.CHOOSING_PAYMENT_METHOD)
+    timeout = time.time() + 7 * 60  # 7 минут ожидания
+    while time.time() < timeout:
+        status = await get_payment_status(payment)
+        if status == "paid":
+            await call.message.delete()
+            await call.message.answer("Оплата прошла, спасибо")
+            await confirm_payment(payment.id)
+            await state.clear()
+            return
+        current_state = await state.get_state()
+        if current_state != StepForm.CHOOSING_PAYMENT_METHOD:
+            loguru.logger.info(f"cancel {call.from_user.id}, {call.from_user.first_name}")
+            await error_payment(payment.id)
+            return
+        await asyncio.sleep(10)
