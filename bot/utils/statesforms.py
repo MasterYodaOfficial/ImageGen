@@ -16,3 +16,8 @@ class StepForm(StatesGroup):
     CHOOSE_IMAGE_FORMAT = State()       # Выбор формата изображения
     ENTER_PROMPT = State()              # Ввод текстового описания (промта)
     CONFIRM_GENERATION = State()        # Подтверждение генерации или начать сначала
+
+    # Для админской рассылки
+    WAITING_BROADCAST_MESSAGE = State()
+    CONFIRM_BROADCAST = State()
+

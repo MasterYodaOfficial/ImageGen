@@ -83,6 +83,12 @@ async def get_user(tg_user: TG_User) -> User:
         )
         return result.scalar_one_or_none()
 
+async def is_admin(tg_user: TG_User) -> bool:
+    """Проверка на админку"""
+    user = await get_user(tg_user)
+    return user.is_admin if user else False
+
+
 async def has_available_generations(tg_user: TG_User) -> bool:
     """Проверяет, есть ли у пользователя хотя бы 1 доступная генерация"""
     async with get_session() as session:

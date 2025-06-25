@@ -16,6 +16,8 @@ from bot.utils.keys import BOT_TOKEN, YOOKASSA_SECRET_KEY, YOOKASSA_SHOP_ID
 from bot.utils.commands import set_commands
 from bot.utils.utils import start_bot
 from bot.utils.statesforms import StepForm
+from bot.utils.throttling import ThrottlingMiddleware
+
 
 from yookassa import Configuration
 
@@ -31,6 +33,10 @@ async def run_bot() -> None:
 
     dp.message.filter(F.chat.type == "private")
     dp.startup.register(start_bot)
+
+    # Антиспам
+    dp.message.middleware(ThrottlingMiddleware(limit=1.5))
+    dp.callback_query.middleware(ThrottlingMiddleware(limit=1.0))
 
     # Команды
     dp.message.register(start_command, Command('start'))

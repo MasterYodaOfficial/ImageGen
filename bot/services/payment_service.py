@@ -1,3 +1,5 @@
+import loguru
+
 from bot.database.models import Payment, User, Tariff
 from yookassa import Payment as YooPayment
 import asyncio
@@ -16,21 +18,24 @@ async def create_payment_service(
     """
     Создаёт платёж через нужную платёжную систему, сохраняет его в БД и возвращает объект и ссылку на оплату.
     """
-    if method == "yookassa":
-        external_id, payment_url = await create_payment_yokassa(tariff.price_rub, tariff.title)
-    elif method == "crypto":
-        pass # TODO Сделать оплату криптой
-        # external_id, payment_url = await crypto_create_payment(amount, currency)
-    else:
-        raise ValueError(f"Unknown payment method: {method}")
-    payment: Payment = await create_payment(
-        user_id=user.id,
-        tariff_id=tariff.id,
-        amount=tariff.price_rub,
-        method=method,
-        external_id=external_id
-    )
-    return payment, payment_url
+    try:
+        if method == "yookassa":
+            external_id, payment_url = await create_payment_yokassa(tariff.price_rub, tariff.title)
+        elif method == "crypto":
+            raise ValueError(f"Unknown payment method: {method}") # TODO Сделать оплату криптой
+            # external_id, payment_url = await crypto_create_payment(amount, currency)
+        else:
+            raise ValueError(f"Unknown payment method: {method}")
+        payment: Payment = await create_payment(
+            user_id=user.id,
+            tariff_id=tariff.id,
+            amount=tariff.price_rub,
+            method=method,
+            external_id=external_id
+        )
+        return payment, payment_url
+    except ValueError as ex:
+        loguru.logger.debug(ex)
 
 async def get_payment_status(payment: Payment):
     """
