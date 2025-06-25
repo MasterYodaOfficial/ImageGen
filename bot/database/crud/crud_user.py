@@ -88,6 +88,12 @@ async def is_admin(tg_user: TG_User) -> bool:
     user = await get_user(tg_user)
     return user.is_admin if user else False
 
+async def get_all_telegram_ids() -> list[int]:
+    """Получает список всех Telegram ID пользователей"""
+    async with get_session() as session:
+        result = await session.execute(select(User.telegram_id))
+        telegram_ids = result.scalars().all()
+        return telegram_ids
 
 async def has_available_generations(tg_user: TG_User) -> bool:
     """Проверяет, есть ли у пользователя хотя бы 1 доступная генерация"""
