@@ -3,18 +3,19 @@ from aiogram.fsm.context import FSMContext
 from aiogram.exceptions import TelegramBadRequest
 from bot.utils.statesforms import StepForm
 from bot.utils.messages import (choosing_format_message, enter_prompt_message, attention_prompt_message,
-                                continue_prompt_message, out_of_generations)
-from bot.keyboards.inlines import make_formate_buttons, continue_prompt_buttons
+                                continue_prompt_message, out_of_generations, choose_model_message)
+from bot.utils.settings import image_generator
+from bot.keyboards.inlines import make_formate_buttons, continue_prompt_buttons, make_models_buttons
 from bot.database.crud.crud_generations import create_image_generation, update_image_generation_status
-from bot.database.crud.crud_user import has_available_generations, update_user_generations
+from bot.database.crud.crud_user import has_available_generations
+
+from bot.services.image_generator import ImageMode, ImageModel
 import loguru
-from bot.services.image_gen_api import ImageMode, generate_dalle_image, generate_image_stream
-# from testing_3 import free_generate, ImageMode
-# from bot.utils.utils import download_file
+
 
 
 async def generate_command(message: Message, state: FSMContext):
-    """Старт команды генерации изображения"""
+    """Старт команды генерации изображения, предоставляет выбрать формат изображения"""
 
     loguru.logger.info(f"{message.from_user.id}, {message.from_user.first_name}")
     has_generations = await has_available_generations(message.from_user)
@@ -31,17 +32,29 @@ async def generate_command(message: Message, state: FSMContext):
 
 async def get_format_image(call: CallbackQuery, state: FSMContext):
 
-    """Принимает кнопку выбора формата изображения"""
+    """Принимает кнопку выбора формата изображения, предоставляет выбрать модель для генерации"""
 
     loguru.logger.info(f"{call.from_user.id}, {call.from_user.first_name}")
     if call.data.startswith("format"):
         _, format_image = call.data.split(":")
-        sent = await call.message.edit_text(
-            text=enter_prompt_message
+        await state.update_data(format_image=format_image)
+        await call.message.edit_text(
+            text=choose_model_message,
+            reply_markup=make_models_buttons(
+                models=image_generator.get_model_choices()
+            )
         )
-        await state.update_data(
-            cur_message_id=sent.message_id, # Тут сохраняю id сообщения для дальнейшего изменения
-            format_image=format_image
+        await state.set_state(StepForm.CHOOSING_MODEL)
+    else:
+        await call.message.delete()
+
+async def get_model_generation(call: CallbackQuery, state: FSMContext):
+    """Принимает кнопки с выбором модели для генерации, просит ввести промт"""
+    if call.data.startswith("model"):
+        _, model_generation = call.data.split(":")
+        await state.update_data(model_generation=model_generation)
+        await call.message.edit_text(
+            text=enter_prompt_message
         )
         await state.set_state(StepForm.ENTER_PROMPT)
     else:
@@ -90,6 +103,7 @@ async def get_prompt(message: Message, state: FSMContext):
     )
     await state.set_state(StepForm.CONFIRM_GENERATION)
 
+
 async def get_confirm_generation(call: CallbackQuery, state: FSMContext):
 
     """Принимает кнопку для продолжения генерации. Создает изображение и отправляет его пользователю"""
@@ -97,42 +111,33 @@ async def get_confirm_generation(call: CallbackQuery, state: FSMContext):
     loguru.logger.info(f"{call.from_user.id}, {call.from_user.first_name}")
     if call.data.startswith("confirm"):
         _, call_answer = call.data.split(":")
-        data_user = await state.get_data()
-        prompt = data_user.get('prompt')
-        format_image = data_user.get('format_image')
+
         if call_answer == "start_gen":
-            generation = await create_image_generation(call.from_user, prompt)
             await call.message.edit_text("⏳ (от 0 до 2 мин.) Генерируем изображение...")
-            try:
-                # image_url = await free_generate(
-                #     prompt=prompt,
-                #     mode=ImageMode(format_image)
-                # )
-                image_url = await generate_image_stream(
-                    prompt=prompt,
-                    mode=ImageMode(format_image)
-                )
-                # image_url = await generate_dalle_image(
-                #     prompt=prompt,
-                #     mode=ImageMode(format_image)
-                # )
-                if not image_url:
-                    raise ValueError("Ошибка генерации")
-                # filename = generation.filename
-                # await download_file(image_url, filename)
-                await update_image_generation_status(generation.id, 'success', image_url)
-                await call.message.bot.send_document(
-                    chat_id=call.from_user.id,
-                    document=image_url,
-                    caption=prompt
-                )
-                await update_user_generations(call.from_user, -1)
-            except Exception as ex:
-                loguru.logger.exception(ex)
-                await update_image_generation_status(generation.id, "error")
-                await call.message.answer("❌ Произошла ошибка при генерации изображения. Попробуйте ещё раз и проверьте правила промта")
+            data = await state.get_data()
+            prompt = data['prompt']
+            mode = ImageMode(data['format_image'])
+            model = ImageModel(data.get('model', ImageModel.DALLE3))  # По умолчанию DALL-E-3
+            # Выбор модели через callback
+            if call.data == "model_neuroimg":
+                model = ImageModel.NEUROIMG
+            elif call.data == "model_dalle2":
+                model = ImageModel.DALLE2
+            elif call.data == "model_gpt":
+                model = ImageModel.GPT_IMAGE_1
+            generation = await create_image_generation(call.from_user, prompt)
+            result = await image_generator.generate(prompt, model, mode)
             await call.message.delete()
+            # TODO Осуществить списание у пользователя токенов
+            if not result:
+                await call.message.answer("❌ Ошибка генерации, пожалуйста повторите с учетом правил платформы.")
+                await update_image_generation_status(generation.id, 'error')
+                await state.clear()
+                return
+            await call.message.answer_document(result, caption=prompt)
+            await update_image_generation_status(generation.id, 'success')
             await state.clear()
+            return
         if call_answer == "restart_gen":
             await call.message.edit_text(
                 text=choosing_format_message,

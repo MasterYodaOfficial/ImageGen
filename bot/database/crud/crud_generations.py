@@ -9,7 +9,7 @@ from aiogram.types import User as TG_User
 
 async def create_image_generation(user_tg: TG_User, prompt: str) -> ImageGeneration:
     async with get_session() as session:
-        filename = f"generated/{uuid4()}.png"
+        filename = f"generated/{uuid4()}.png" # Задел на то, чтобы сохранять все картинки на сервере
 
         result = await session.execute(
             select(User).where(User.telegram_id == user_tg.id)

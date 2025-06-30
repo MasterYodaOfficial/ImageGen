@@ -14,6 +14,7 @@ class StepForm(StatesGroup):
 
     # Генерация изображения
     CHOOSE_IMAGE_FORMAT = State()       # Выбор формата изображения
+    CHOOSING_MODEL = State()            # Выбор модели для генерации
     ENTER_PROMPT = State()              # Ввод текстового описания (промта)
     CONFIRM_GENERATION = State()        # Подтверждение генерации или начать сначала
 

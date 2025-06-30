@@ -4,7 +4,7 @@ import loguru
 from bot.handlers.start import start_command
 from bot.handlers.buy import buy_command, get_tariff_id_inline, choose_payment_method
 from bot.handlers.profile import profile_command
-from bot.handlers.generate import generate_command, get_format_image, get_prompt, get_confirm_generation
+from bot.handlers.generate import generate_command, get_format_image, get_prompt, get_confirm_generation, get_model_generation
 from bot.handlers.about import about_command
 from bot.handlers.for_admins.broadcast import broadcast_command, receive_broadcast_message, confirm_broadcast
 from bot.handlers.for_admins.stats import admin_stats_command
@@ -14,11 +14,12 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.filters import Command
 
 
-from bot.utils.keys import BOT_TOKEN, YOOKASSA_SECRET_KEY, YOOKASSA_SHOP_ID
+from bot.utils.keys import BOT_TOKEN, YOOKASSA_SECRET_KEY, YOOKASSA_SHOP_ID, KEY_OPENAI, KEY_IMAGE_GEN
 from bot.utils.commands import set_commands
 from bot.utils.utils import start_bot
 from bot.utils.statesforms import StepForm
 from bot.utils.throttling import ThrottlingMiddleware
+from bot.services.image_generator import ImageGenerator
 
 
 from yookassa import Configuration
@@ -28,6 +29,11 @@ Configuration.account_id = YOOKASSA_SHOP_ID
 Configuration.secret_key = YOOKASSA_SECRET_KEY
 dp = Dispatcher()
 bot = Bot(BOT_TOKEN, default=DefaultBotProperties(parse_mode='HTML'))
+# Инициализация генератора
+image_generator = ImageGenerator(
+    neuroimg_api_key=KEY_IMAGE_GEN,
+    openai_api_key=KEY_OPENAI
+)
 
 
 
@@ -59,9 +65,11 @@ async def run_bot() -> None:
     dp.callback_query.register(choose_payment_method, StepForm.CHOOSING_PAYMENT_METHOD)
 
     # Колбеки генерации и отлов промта для генерации
-    dp.callback_query.register(get_format_image, StepForm.CHOOSE_IMAGE_FORMAT)
-    dp.message.register(get_prompt, StepForm.ENTER_PROMPT)
-    dp.callback_query.register(get_confirm_generation, StepForm.CONFIRM_GENERATION)
+    dp.callback_query.register(get_format_image, StepForm.CHOOSE_IMAGE_FORMAT)      # Принимаем формат изображения
+    dp.callback_query.register(get_model_generation, StepForm.CHOOSING_MODEL)       # Принимает модель изображения
+    dp.message.register(get_prompt, StepForm.ENTER_PROMPT)                          # Принимает промт
+    dp.callback_query.register(get_confirm_generation, StepForm.CONFIRM_GENERATION) # Подтверждение генерации
+
 
     await set_commands(bot)
     loguru.logger.info('Запуск бота')
