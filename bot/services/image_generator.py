@@ -7,6 +7,7 @@ from typing import Optional, List, Tuple, Union
 import base64
 from io import BytesIO
 from aiogram.types import InputFile
+from bot.utils.keys import KEY_OPENAI, KEY_IMAGE_GEN
 
 
 class ImageMode(str, Enum):
@@ -15,11 +16,21 @@ class ImageMode(str, Enum):
     vertical = "vertical"
 
 
+class ImageQuality(str, Enum):
+    standard = "standard"
+    hd = "hd"
+    low = "low"
+    medium = "medium"
+    high = "high"
+
+
 class ImageModel(str, Enum):
-    NEUROIMG = "neuroimg"
-    DALLE2 = "dall-e-2"
-    DALLE3 = "dall-e-3"
-    GPT_IMAGE_1 = "gpt-image-1"
+    NEUROIMG = "neuroArt"
+    GPT_LOW = "gpt-image-1-low"
+    GPT_MEDIUM = "gpt-image-1-medium"
+    GPT_HIGH = "gpt-image-1-high"
+    DALLE = "dall-e-3"
+    DALLE_HD = "dall-e-3-hd"
 
 
 class ImageGenerator:
@@ -53,56 +64,69 @@ class ImageGenerator:
 
     @staticmethod
     def get_model_choices() -> List[Tuple[str, str, str]]:
-        """
-        Возвращает список доступных моделей для генерации изображений.
-        Каждый элемент содержит:
-        - Отображаемое имя модели
-        - Значение модели для callback
-        - Краткое описание модели
-
-        :return: Список кортежей (display_name, callback_value, description)
-        """
         return [
             (
                 "NeuroArt",
                 ImageModel.NEUROIMG.value,
-                "🎨 Реалистичные изображения через neuroimg.art"
+                "🎨 Художественная генерация изображения через neuroimg.art"
             ),
             (
-                "DALL·E 2",
-                ImageModel.DALLE2.value,
-                "⚡ Быстрая генерация от OpenAI"
+                "Gpt-image-1-low",
+                ImageModel.GPT_LOW.value,
+                "Мультимодульная модель от OpenAI Low"
             ),
             (
-                "DALL·E 3",
-                ImageModel.DALLE3.value,
-                "🌟 Самые качественные изображения от OpenAI"
+                "Gpt-image-1-medium",
+                ImageModel.GPT_MEDIUM.value,
+                "Мультимодульная модель от OpenAI Medium"
             ),
             (
-                "GPT-Image",
-                ImageModel.GPT_IMAGE_1.value,
-                "🤖 Экспериментальная модель от OpenAI"
-            )
+                "Gpt-image-1-high",
+                ImageModel.GPT_HIGH.value,
+                "Мультимодульная модель от OpenAI High"
+            ),
+            (
+                "Dall-e-3",
+                ImageModel.DALLE.value,
+                "Флагманская модель от OpenAI. Обладает высоким качеством интерпретации текста и генерацией с отличной композицией"
+            ),
+            (
+                "Dall-e-3-hd",
+                ImageModel.DALLE_HD.value,
+                "Продвинутая версия DALL·E 3 с улучшенной детализацией и глубиной изображения. Подходит для иллюстраций и профессиональных задач."
+            ),
         ]
 
     async def generate(
             self,
             prompt: str,
             model: ImageModel,
-            mode: ImageMode = ImageMode.square
+            mode: ImageMode
     ) -> Union[str, InputFile, None]:
-        """Генерирует изображение и возвращает URL или base64 строку"""
+        """Генерирует изображение и возвращает URL, InputFile или None"""
         if model == ImageModel.NEUROIMG:
             return await self._generate_neuroimg(prompt, mode)
-        elif model == ImageModel.GPT_IMAGE_1:
-            result = await self._generate_gpt_image(prompt, mode)
+        if model in [ImageModel.GPT_LOW, ImageModel.GPT_MEDIUM, ImageModel.GPT_HIGH]:
+            quality_param = self._get_gpt_quality(model)
+            result = await self._generate_gpt_image(prompt, mode, quality_param)
             if not result:
                 return None
             image_data = base64.b64decode(result)
-            file = InputFile(BytesIO(image_data), filename="image.png")
-            return file
-        else:
+            return InputFile(BytesIO(image_data), filename="image.png")
+        if model in [ImageModel.DALLE, ImageModel.DALLE_HD]:
             return await self._generate_dalle(prompt, mode, model.value)
+        return None
+
+    def _get_gpt_quality(self, model: ImageModel) -> str | None:
+        """Определяет качество для GPT-Image моделей"""
+        if model == ImageModel.GPT_LOW:
+            return ImageQuality.low.value
+        if model == ImageModel.GPT_MEDIUM:
+            return ImageQuality.medium.value
+        if model == ImageModel.GPT_HIGH:
+            return ImageQuality.high.value
+        loguru.logger.debug("Ошибка значения")
+        return None
 
     async def _generate_neuroimg(self, prompt: str, mode: ImageMode) -> Optional[str]:
         """Генерация через neuroimg.art API"""
@@ -149,8 +173,7 @@ class ImageGenerator:
                     model=model,
                     prompt=prompt,
                     size=size,
-                    n=1,
-                    quality="standard"
+                    n=1
                 )
                 return response.data[0].url
             except Exception as ex:
@@ -160,20 +183,28 @@ class ImageGenerator:
     async def _generate_gpt_image(
             self,
             prompt: str,
-            mode: ImageMode
+            mode: ImageMode,
+            quality: str
     ) -> Optional[str]:
         """Генерация через GPT-Image-1 API"""
-        # Для GPT-Image-1 размеры не указываются в API
+        size = self.get_image_size_openai(mode)
         for attempt in range(2):
             try:
                 response = await self.openai_client.images.generate(
                     model="gpt-image-1",
                     prompt=prompt,
+                    size=size,
                     n=1,
-                    response_format="b64_json",
-                    moderation="low"
+                    quality=quality
                 )
                 return response.data[0].b64_json
             except Exception as ex:
                 loguru.logger.error(f"GPT-Image error (attempt {attempt + 1}): {ex}")
         return None
+
+
+# Инициализация генератора
+image_generator = ImageGenerator(
+    neuroimg_api_key=KEY_IMAGE_GEN,
+    openai_api_key=KEY_OPENAI
+)

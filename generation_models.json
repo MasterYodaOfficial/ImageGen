@@ -1,0 +1,38 @@
+[
+  {
+    "name": "NeuroArt",
+    "label": "NeuroArt",
+    "price_rub": 2.5,
+    "token_cost": 5
+  },
+  {
+    "name": "Gpt-image-1-low",
+    "label": "GPT-Image-1 Low 1024x1536 / 1536x1024",
+    "price_rub": 3.9,
+    "token_cost": 8
+  },
+  {
+    "name": "Gpt-image-1-medium",
+    "label": "GPT-Image-1 Medium 1024x1536 / 1536x1024",
+    "price_rub": 15.30,
+    "token_cost": 30
+  },
+  {
+    "name": "Gpt-image-1-high",
+    "label": "GPT-Image-1 High 1024x1536 / 1536x1024",
+    "price_rub": 61.20,
+    "token_cost": 120
+  },
+  {
+    "name": "Dall-e-3",
+    "label": "DALL·E 3 1792x1024 / 1024x1792",
+    "price_rub": 19.6,
+    "token_cost": 40
+  },
+  {
+    "name": "Dall-e-3-hd",
+    "label": "DALL·E 3 HD 1792x1024 / 1024x1792",
+    "price_rub": 29.4,
+    "token_cost": 60
+  }
+]

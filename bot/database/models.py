@@ -1,6 +1,5 @@
 from datetime import datetime
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, SmallInteger, ForeignKey
-from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import declarative_base, relationship
 
 
@@ -16,7 +15,7 @@ class User(Base):
     username = Column(String(50))
     join_date = Column(DateTime, default=datetime.utcnow) # дата регистрации
     is_admin = Column(Boolean, default=False) # является админом или нет
-    counter = Column(Integer, default=3)  # Остаток генераций
+    tokens = Column(Integer, default=0)  # Количество токенов для генерации
 
     referral_code = Column(String(20), unique=True, nullable=False) # Реферальный код пользователя
     invited_by_code = Column(String(20), ForeignKey('users.referral_code'), nullable=True) # Реферальный код пригласившего
@@ -58,10 +57,10 @@ class Tariff(Base):
     __tablename__ = 'tariffs'
 
     id = Column(String, primary_key=True)  # Например, "pack_100"
-    title = Column(String, nullable=False)  # Название тарифа (например, "100 генераций")
+    title = Column(String, nullable=False)  # Название тарифа (например, "100 токенов")
     price_rub = Column(Integer, nullable=False)  # Цена в рублях
-    generation_amount = Column(Integer, nullable=False)  # Сколько генераций входит в пакет
-    bonus_generations = Column(Integer, default=0)  # Бонусные генерации (например, +10)
+    tokens_amount = Column(Integer, nullable=False)  # Сколько токенов входит в пакет
+    bonus_tokens = Column(Integer, default=0)  # Бонусные токены (например, +10)
     is_active = Column(Boolean, default=True)  # Доступен ли тариф
     sort_order = Column(SmallInteger, default=0)  # Порядок отображения в списке
 
@@ -115,6 +114,7 @@ class ImageGeneration(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
     id_api = Column(String, nullable=True) # Уникальный ключ от API
+    # model_id = Column(Integer, ForeignKey("generation_models.id"), nullable=True)
 
     prompt = Column(String, nullable=False)  # Запрос, который использовал пользователь
     filename = Column(String, nullable=False)  # путь до изображения
@@ -124,3 +124,15 @@ class ImageGeneration(Base):
     
     # Связь с пользователем
     user = relationship("User", backref="image_generations")
+    # model = relationship("GenerationModel", backref="image_generations")
+
+
+# class GenerationModel(Base):
+#     __tablename__ = 'generation_models'
+#
+#     id = Column(Integer, primary_key=True)
+#     name = Column(String, unique=True, nullable=False)  # Название модели (gpt-image-1, "neuroimg", "dall-e-2", "dall-e-3")
+#     token_cost = Column(Integer, nullable=False, default=1)  # Сколько токенов списывается за 1 генерацию
+#     is_active = Column(Boolean, default=True)  # Можно ли сейчас использовать модель
+
+

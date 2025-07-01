@@ -19,7 +19,7 @@ from bot.utils.commands import set_commands
 from bot.utils.utils import start_bot
 from bot.utils.statesforms import StepForm
 from bot.utils.throttling import ThrottlingMiddleware
-from bot.services.image_generator import ImageGenerator
+
 
 
 from yookassa import Configuration
@@ -29,11 +29,7 @@ Configuration.account_id = YOOKASSA_SHOP_ID
 Configuration.secret_key = YOOKASSA_SECRET_KEY
 dp = Dispatcher()
 bot = Bot(BOT_TOKEN, default=DefaultBotProperties(parse_mode='HTML'))
-# Инициализация генератора
-image_generator = ImageGenerator(
-    neuroimg_api_key=KEY_IMAGE_GEN,
-    openai_api_key=KEY_OPENAI
-)
+
 
 
 

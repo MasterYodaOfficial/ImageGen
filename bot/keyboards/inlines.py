@@ -1,9 +1,9 @@
 from aiogram.types import InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
-from typing import List, Tuple
+from typing import List
 from bot.database.models import Tariff
 from urllib.parse import quote
-from bot.utils.settings import image_generator
+from bot.services.image_generator import ImageGenerator
 
 
 def make_referral_button(referral_link: str) -> InlineKeyboardMarkup:
@@ -55,13 +55,13 @@ def make_formate_buttons() -> InlineKeyboardMarkup:
     kb.adjust(1)
     return kb.as_markup()
 
-def make_models_buttons(models: List[Tuple[str, str, str]]) -> InlineKeyboardMarkup:
+def make_models_buttons() -> InlineKeyboardMarkup:
     """
     Создает кнопки для выбора модели для генерации
     Список кортежей (display_name, callback_value, description)
     """
     keyboard_builder = InlineKeyboardBuilder()
-    for model in models:
+    for model in ImageGenerator.get_model_choices():
         keyboard_builder.button(
             text=f"{model[0]}",
             callback_data=f"model:{model[1]}"

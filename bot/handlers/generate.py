@@ -3,14 +3,13 @@ from aiogram.fsm.context import FSMContext
 from aiogram.exceptions import TelegramBadRequest
 from bot.utils.statesforms import StepForm
 from bot.utils.messages import (choosing_format_message, enter_prompt_message, attention_prompt_message,
-                                continue_prompt_message, out_of_generations, choose_model_message)
-from bot.utils.settings import image_generator
+                                continue_prompt_message, choose_model_message)
 from bot.keyboards.inlines import make_formate_buttons, continue_prompt_buttons, make_models_buttons
 from bot.database.crud.crud_generations import create_image_generation, update_image_generation_status
-from bot.database.crud.crud_user import has_available_generations
 
 from bot.services.image_generator import ImageMode, ImageModel
 import loguru
+from bot.services.image_generator import image_generator
 
 
 
@@ -18,17 +17,13 @@ async def generate_command(message: Message, state: FSMContext):
     """Старт команды генерации изображения, предоставляет выбрать формат изображения"""
 
     loguru.logger.info(f"{message.from_user.id}, {message.from_user.first_name}")
-    has_generations = await has_available_generations(message.from_user)
-    if has_generations:
-        await message.answer(
-            text=choosing_format_message,
-            reply_markup=make_formate_buttons()
-        )
-        await state.set_state(StepForm.CHOOSE_IMAGE_FORMAT)
-    else:
-        await message.answer(
-            text=out_of_generations)
-        await state.clear()
+    message = await message.answer(
+        text=choosing_format_message,
+        reply_markup=make_formate_buttons()
+    )
+    cur_message_id = message.message_id
+    await state.update_data(cur_message_id=cur_message_id)
+    await state.set_state(StepForm.CHOOSE_IMAGE_FORMAT)
 
 async def get_format_image(call: CallbackQuery, state: FSMContext):
 
@@ -40,9 +35,7 @@ async def get_format_image(call: CallbackQuery, state: FSMContext):
         await state.update_data(format_image=format_image)
         await call.message.edit_text(
             text=choose_model_message,
-            reply_markup=make_models_buttons(
-                models=image_generator.get_model_choices()
-            )
+            reply_markup=make_models_buttons()
         )
         await state.set_state(StepForm.CHOOSING_MODEL)
     else:
@@ -117,14 +110,7 @@ async def get_confirm_generation(call: CallbackQuery, state: FSMContext):
             data = await state.get_data()
             prompt = data['prompt']
             mode = ImageMode(data['format_image'])
-            model = ImageModel(data.get('model', ImageModel.DALLE3))  # По умолчанию DALL-E-3
-            # Выбор модели через callback
-            if call.data == "model_neuroimg":
-                model = ImageModel.NEUROIMG
-            elif call.data == "model_dalle2":
-                model = ImageModel.DALLE2
-            elif call.data == "model_gpt":
-                model = ImageModel.GPT_IMAGE_1
+            model = ImageModel(data.get('model', ImageModel.DALLE))  # По умолчанию DALL-E-3
             generation = await create_image_generation(call.from_user, prompt)
             result = await image_generator.generate(prompt, model, mode)
             await call.message.delete()
