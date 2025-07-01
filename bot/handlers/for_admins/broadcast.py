@@ -9,7 +9,7 @@ from bot.utils.statesforms import StepForm
 from bot.keyboards.inlines import continue_broadcast_buttons
 
 import asyncio
-import loguru
+from bot.logger import logger
 
 async def send_broadcast(bot: Bot, original_message: Message, user_ids: list[int], admin_id: int):
     """Фоновая задача для отправки всем пользователям"""
@@ -22,7 +22,7 @@ async def send_broadcast(bot: Bot, original_message: Message, user_ids: list[int
             await asyncio.sleep(0.05)  # пауза, чтобы не ловить Flood
         except Exception as e:
             failed += 1
-            loguru.logger.warning(f"Ошибка при отправке {user_id}: {e}")
+            logger.warning(f"Ошибка при отправке {user_id}: {e}")
             if "Too Many Requests" in str(e):
                 await asyncio.sleep(1.5)
             else:
@@ -39,14 +39,14 @@ async def send_broadcast(bot: Bot, original_message: Message, user_ids: list[int
     try:
         await bot.send_message(admin_id, text)
     except Exception as e:
-        loguru.logger.error(f"Не удалось отправить лог админу: {e}")
+        logger.error(f"Не удалось отправить лог админу: {e}")
 
 
 async def broadcast_command(message: Message, state: FSMContext):
     """
     Запуск команды для рассылки пользователям
     """
-    loguru.logger.info(f"{message.from_user.id}, {message.from_user.first_name}")
+    logger.info(f"{message.from_user.id}, {message.from_user.first_name}")
     if await is_admin(message.from_user):
         await message.answer(broadcast_message)
         await state.set_state(StepForm.WAITING_BROADCAST_MESSAGE)
@@ -54,7 +54,7 @@ async def broadcast_command(message: Message, state: FSMContext):
 
 async def receive_broadcast_message(message: Message, state: FSMContext):
     """Ждем сообщение для отправки"""
-    loguru.logger.info(f"{message.from_user.id}, {message.from_user.first_name}")
+    logger.info(f"{message.from_user.id}, {message.from_user.first_name}")
     await state.update_data(broadcast_message=message)
     await message.reply(
         text="✅ Получено! Проверьте это сообщение и подтвердите рассылку или отмените.",

@@ -4,6 +4,7 @@ from typing import Callable, Dict, Any
 
 from aiogram import BaseMiddleware
 from aiogram.types import Message, CallbackQuery
+from bot.logger import logger
 
 
 
@@ -42,6 +43,8 @@ class ThrottlingMiddleware(BaseMiddleware):
 
     async def handle_throttle(self, event: Message | CallbackQuery):
         if isinstance(event, Message):
+            logger.warning(f"Spam {event.from_user.id} {event.from_user.first_name}")
             await event.answer("⚠️ Слишком много запросов! Пожалуйста, подождите.")
         elif isinstance(event, CallbackQuery):
+            logger.warning(f"Spam {event.from_user.id} {event.from_user.first_name}")
             await event.answer("⏳ Не так быстро! Подождите немного.", show_alert=True)

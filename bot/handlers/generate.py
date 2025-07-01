@@ -8,7 +8,7 @@ from bot.keyboards.inlines import make_formate_buttons, continue_prompt_buttons,
 from bot.database.crud.crud_generations import create_image_generation, update_image_generation_status
 
 from bot.services.image_generator import ImageMode, ImageModel
-import loguru
+from bot.logger import logger
 from bot.services.image_generator import image_generator
 
 
@@ -16,7 +16,7 @@ from bot.services.image_generator import image_generator
 async def generate_command(message: Message, state: FSMContext):
     """Старт команды генерации изображения, предоставляет выбрать формат изображения"""
 
-    loguru.logger.info(f"{message.from_user.id}, {message.from_user.first_name}")
+    logger.info(f"{message.from_user.id}, {message.from_user.first_name}")
     message = await message.answer(
         text=choosing_format_message,
         reply_markup=make_formate_buttons()
@@ -29,7 +29,7 @@ async def get_format_image(call: CallbackQuery, state: FSMContext):
 
     """Принимает кнопку выбора формата изображения, предоставляет выбрать модель для генерации"""
 
-    loguru.logger.info(f"{call.from_user.id}, {call.from_user.first_name}")
+    logger.info(f"{call.from_user.id}, {call.from_user.first_name}")
     if call.data.startswith("format"):
         _, format_image = call.data.split(":")
         await state.update_data(format_image=format_image)
@@ -58,7 +58,7 @@ async def get_prompt(message: Message, state: FSMContext):
 
     """Обработка промта от пользователя"""
 
-    loguru.logger.info(f"{message.from_user.id}, {message.from_user.first_name}")
+    logger.info(f"{message.from_user.id}, {message.from_user.first_name}")
 
     max_prompt_length = 500
     user_data = await state.get_data()
@@ -76,7 +76,7 @@ async def get_prompt(message: Message, state: FSMContext):
 
             return
         except TelegramBadRequest as ex:
-            loguru.logger.debug(f"{ex}")
+            logger.debug(f"{ex}")
             return
 
 
@@ -101,7 +101,7 @@ async def get_confirm_generation(call: CallbackQuery, state: FSMContext):
 
     """Принимает кнопку для продолжения генерации. Создает изображение и отправляет его пользователю"""
 
-    loguru.logger.info(f"{call.from_user.id}, {call.from_user.first_name}")
+    logger.info(f"{call.from_user.id}, {call.from_user.first_name}")
     if call.data.startswith("confirm"):
         _, call_answer = call.data.split(":")
 
@@ -110,7 +110,7 @@ async def get_confirm_generation(call: CallbackQuery, state: FSMContext):
             data = await state.get_data()
             prompt = data['prompt']
             mode = ImageMode(data['format_image'])
-            model = ImageModel(data.get('model', ImageModel.DALLE))  # По умолчанию DALL-E-3
+            model = ImageModel(data.get('model_generation'))  # По умолчанию DALL-E-3
             generation = await create_image_generation(call.from_user, prompt)
             result = await image_generator.generate(prompt, model, mode)
             await call.message.delete()

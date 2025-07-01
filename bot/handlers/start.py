@@ -3,12 +3,12 @@ from aiogram.fsm.context import FSMContext
 from bot.database.session import get_session
 from bot.database.crud.crud_user import get_or_create_user
 from bot.utils.messages import start_text, start_text_trial
-import loguru
+from bot.logger import logger
 
 
 async def start_command(message: Message, state: FSMContext):
 
-    loguru.logger.info(f"{message.from_user.id}, {message.from_user.first_name}")
+    logger.info(f"{message.from_user.id}, {message.from_user.first_name}")
     referral_code = None
     # Проверяем, есть ли аргументы в команде
     if message.text and len(message.text.split()) > 1:

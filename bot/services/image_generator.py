@@ -1,12 +1,11 @@
 import aiohttp
 import json
-import loguru
+from bot.logger import logger
 from enum import Enum
 from openai import AsyncOpenAI
 from typing import Optional, List, Tuple, Union
 import base64
-from io import BytesIO
-from aiogram.types import InputFile
+from aiogram.types import BufferedInputFile
 from bot.utils.keys import KEY_OPENAI, KEY_IMAGE_GEN
 
 
@@ -30,7 +29,7 @@ class ImageModel(str, Enum):
     GPT_MEDIUM = "gpt-image-1-medium"
     GPT_HIGH = "gpt-image-1-high"
     DALLE = "dall-e-3"
-    DALLE_HD = "dall-e-3-hd"
+    # DALLE_HD = "dall-e-3-hd"
 
 
 class ImageGenerator:
@@ -53,13 +52,23 @@ class ImageGenerator:
         raise ValueError("Invalid image mode")
 
     @staticmethod
-    def get_image_size_openai(mode: ImageMode) -> str:
+    def get_image_size_dalle(mode: ImageMode) -> str:
         if mode == ImageMode.square:
             return "1024x1024"
         elif mode == ImageMode.horizontal:
             return "1792x1024"
         elif mode == ImageMode.vertical:
             return "1024x1792"
+        raise ValueError("Invalid image mode")
+
+    @staticmethod
+    def get_image_size_openai(mode: ImageMode) -> str:
+        if mode == ImageMode.square:
+            return "1024x1024"
+        elif mode == ImageMode.horizontal:
+            return "1536x1024"
+        elif mode == ImageMode.vertical:
+            return "1024x1536"
         raise ValueError("Invalid image mode")
 
     @staticmethod
@@ -89,12 +98,12 @@ class ImageGenerator:
                 "Dall-e-3",
                 ImageModel.DALLE.value,
                 "Флагманская модель от OpenAI. Обладает высоким качеством интерпретации текста и генерацией с отличной композицией"
-            ),
-            (
-                "Dall-e-3-hd",
-                ImageModel.DALLE_HD.value,
-                "Продвинутая версия DALL·E 3 с улучшенной детализацией и глубиной изображения. Подходит для иллюстраций и профессиональных задач."
-            ),
+            )
+            # (
+            #     "Dall-e-3-hd",
+            #     ImageModel.DALLE_HD.value,
+            #     "Продвинутая версия DALL·E 3 с улучшенной детализацией и глубиной изображения. Подходит для иллюстраций и профессиональных задач."
+            # ),
         ]
 
     async def generate(
@@ -102,20 +111,23 @@ class ImageGenerator:
             prompt: str,
             model: ImageModel,
             mode: ImageMode
-    ) -> Union[str, InputFile, None]:
-        """Генерирует изображение и возвращает URL, InputFile или None"""
-        if model == ImageModel.NEUROIMG:
-            return await self._generate_neuroimg(prompt, mode)
-        if model in [ImageModel.GPT_LOW, ImageModel.GPT_MEDIUM, ImageModel.GPT_HIGH]:
-            quality_param = self._get_gpt_quality(model)
-            result = await self._generate_gpt_image(prompt, mode, quality_param)
-            if not result:
-                return None
-            image_data = base64.b64decode(result)
-            return InputFile(BytesIO(image_data), filename="image.png")
-        if model in [ImageModel.DALLE, ImageModel.DALLE_HD]:
-            return await self._generate_dalle(prompt, mode, model.value)
-        return None
+    ) -> Union[str, BufferedInputFile, None]:
+        """Генерирует изображение и возвращает URL, BufferedInputFile или None"""
+        try:
+            if model == ImageModel.NEUROIMG:
+                return await self._generate_neuroimg(prompt, mode)
+            if model in [ImageModel.GPT_LOW, ImageModel.GPT_MEDIUM, ImageModel.GPT_HIGH]:
+                quality_param = self._get_gpt_quality(model)
+                result = await self._generate_gpt_image(prompt, mode, quality_param)
+                if not result:
+                    return None
+                image_data = base64.b64decode(result)
+                return BufferedInputFile(image_data, filename="your_image.png")
+            if model in [ImageModel.DALLE]: # ImageModel.DALLE_HD пока нельзя
+                return await self._generate_dalle(prompt, mode, model.value)
+            return None
+        except Exception as ex:
+            logger.error(ex)
 
     def _get_gpt_quality(self, model: ImageModel) -> str | None:
         """Определяет качество для GPT-Image моделей"""
@@ -125,7 +137,7 @@ class ImageGenerator:
             return ImageQuality.medium.value
         if model == ImageModel.GPT_HIGH:
             return ImageQuality.high.value
-        loguru.logger.debug("Ошибка значения")
+        logger.debug("Ошибка значения")
         return None
 
     async def _generate_neuroimg(self, prompt: str, mode: ImageMode) -> Optional[str]:
@@ -156,7 +168,7 @@ class ImageGenerator:
                                 if status["status"] == "SUCCESS":
                                     return status['image_url']
             except Exception as ex:
-                loguru.logger.error(f"Neuroimg error (attempt {attempt + 1}): {ex}")
+                logger.error(f"Neuroimg error (attempt {attempt + 1}): {ex}")
         return None
 
     async def _generate_dalle(
@@ -166,7 +178,7 @@ class ImageGenerator:
             model: str
     ) -> Optional[str]:
         """Генерация через DALL-E API"""
-        size = self.get_image_size_openai(mode)
+        size = self.get_image_size_dalle(mode)
         for attempt in range(2):
             try:
                 response = await self.openai_client.images.generate(
@@ -177,7 +189,7 @@ class ImageGenerator:
                 )
                 return response.data[0].url
             except Exception as ex:
-                loguru.logger.error(f"DALL-E error (attempt {attempt + 1}): {ex}")
+                logger.error(f"DALL-E error (attempt {attempt + 1}): {ex}")
         return None
 
     async def _generate_gpt_image(
@@ -199,7 +211,7 @@ class ImageGenerator:
                 )
                 return response.data[0].b64_json
             except Exception as ex:
-                loguru.logger.error(f"GPT-Image error (attempt {attempt + 1}): {ex}")
+                logger.error(f"GPT-Image error (attempt {attempt + 1}): {ex}")
         return None
 
 

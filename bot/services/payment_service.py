@@ -1,4 +1,4 @@
-import loguru
+from bot.logger import logger
 
 from bot.database.models import Payment, User, Tariff
 from yookassa import Payment as YooPayment
@@ -35,7 +35,7 @@ async def create_payment_service(
         )
         return payment, payment_url
     except ValueError as ex:
-        loguru.logger.debug(ex)
+        logger.debug(ex)
 
 async def get_payment_status(payment: Payment):
     """

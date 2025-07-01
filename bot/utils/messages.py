@@ -40,13 +40,13 @@ confirm_purchase_message = """
 
 profile_message = """
 <b>👤 Ваш профиль</b>
-💰 <b>Баланс генераций:</b> <code>{balance}</code><b> шт.</b>
+💰 <b>Баланс токенов:</b> <code>{balance}</code><b> шт.</b>
 👥 <b>Приглашено друзей:</b> <code>{referral_count}</code>
 🎁 <b>Бонус от друзей:</b> <code>{referral_bonus}</code><b> шт.</b>
 🔗 <b>Ваша реферальная ссылка:</b>
 <code>https://t.me/{bot_name}?start={user_code}</code>
 За каждого друга вы получаете <b>+10 генераций</b> 🎉
-""" # balance, referral_count, referral_bonus, user_code, bot_name
+""" # tokens, referral_count, referral_bonus, user_code, bot_name
 
 choosing_format_message = """
 <b>Выбор формата изображения</b>

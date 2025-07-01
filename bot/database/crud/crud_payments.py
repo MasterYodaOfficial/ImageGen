@@ -1,4 +1,3 @@
-import uuid
 from bot.database.models import User, Tariff, Payment
 from sqlalchemy import select
 from bot.database.session import get_session

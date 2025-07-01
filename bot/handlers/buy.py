@@ -10,7 +10,7 @@ from bot.utils.statesforms import StepForm
 from bot.services.payment_service import create_payment_service, get_payment_status
 from bot.database.crud.crud_tariffs import get_tariff_by_id
 from bot.database.crud.crud_payments import confirm_payment, error_payment
-import loguru
+from bot.logger import logger
 import asyncio
 import time
 
@@ -20,7 +20,7 @@ async def buy_command(message: Message, state: FSMContext):
 
     """Команда купить"""
 
-    loguru.logger.info(f"{message.from_user.id}, {message.from_user.first_name}")
+    logger.info(f"{message.from_user.id}, {message.from_user.first_name}")
     tariffs = await get_active_tariffs()
 
     await message.answer(
@@ -36,7 +36,7 @@ async def get_tariff_id_inline(call: CallbackQuery, state: FSMContext):
 
     """Принимает id тарифа и сохраняет в машину состояний"""
 
-    loguru.logger.info(f"{call.from_user.id}, {call.from_user.first_name}")
+    logger.info(f"{call.from_user.id}, {call.from_user.first_name}")
     if call.data.startswith("tariff"):
         _, tariff_id = call.data.split(":")
         await state.update_data(tariff_id=tariff_id)
@@ -53,7 +53,7 @@ async def choose_payment_method(call: CallbackQuery, state: FSMContext):
     """Принимает кнопку выбора метода оплаты отправляет ссылку на оплату, ждет оплату и
     при оплате отправляет сообщение об успешной оплате"""
 
-    loguru.logger.info(f"{call.from_user.id}, {call.from_user.first_name}")
+    logger.info(f"{call.from_user.id}, {call.from_user.first_name}")
     try:
         if call.data.startswith("pay"):
             _, payment_method = call.data.split(":") # Например: "yookassa" или "crypto"
@@ -89,11 +89,11 @@ async def choose_payment_method(call: CallbackQuery, state: FSMContext):
                     return
                 current_state = await state.get_state()
                 if current_state != StepForm.CONFIRM_PURCHASE:
-                    loguru.logger.info(f"cancel {call.from_user.id}, {call.from_user.first_name}")
+                    logger.info(f"cancel {call.from_user.id}, {call.from_user.first_name}")
                     await error_payment(payment.id)
                     return
                 await asyncio.sleep(10)
         else:
             await call.message.delete()
     except TypeError as ex:
-        loguru.logger.debug(ex)
+        logger.debug(ex)

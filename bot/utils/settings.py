@@ -1,5 +1,5 @@
 from aiogram import Dispatcher, Bot, F
-import loguru
+from bot.logger import logger
 
 from bot.handlers.start import start_command
 from bot.handlers.buy import buy_command, get_tariff_id_inline, choose_payment_method
@@ -68,6 +68,6 @@ async def run_bot() -> None:
 
 
     await set_commands(bot)
-    loguru.logger.info('Запуск бота')
+    logger.info('Запуск бота')
 
     await dp.start_polling(bot)

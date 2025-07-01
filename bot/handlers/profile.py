@@ -5,12 +5,12 @@ from bot.database.crud.crud_user import get_or_create_user, get_invited_count, g
 from bot.utils.messages import profile_message # balance, referral_count, referral_bonus, user_code, bot_name
 from bot.keyboards.inlines import make_referral_button
 from bot.utils.keys import BOT_NAME
-import loguru
+from bot.logger import logger
 
 
 async def profile_command(message: Message, state: FSMContext):
 
-    loguru.logger.info(f"{message.from_user.id}, {message.from_user.first_name}")
+    logger.info(f"{message.from_user.id}, {message.from_user.first_name}")
 
     async with get_session() as session:
         user, new = await get_or_create_user(session, message.from_user)
@@ -18,7 +18,7 @@ async def profile_command(message: Message, state: FSMContext):
         total_referral_rewards = await get_total_referral_rewards(session, user.referral_code) # тут количество бонусов пользователя
         await message.answer(
             text=profile_message.format(
-                balance=user.counter,
+                balance=user.tokens,
                 referral_count=invited_count,
                 referral_bonus=total_referral_rewards,
                 user_code=user.referral_code,

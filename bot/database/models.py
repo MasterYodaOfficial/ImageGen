@@ -114,7 +114,7 @@ class ImageGeneration(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
     id_api = Column(String, nullable=True) # Уникальный ключ от API
-    # model_id = Column(Integer, ForeignKey("generation_models.id"), nullable=True)
+    model_id = Column(Integer, ForeignKey("generation_models.id"), nullable=True)
 
     prompt = Column(String, nullable=False)  # Запрос, который использовал пользователь
     filename = Column(String, nullable=False)  # путь до изображения
@@ -122,17 +122,17 @@ class ImageGeneration(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     status = Column(String(20), default="pending")  # pending / success / error
     
-    # Связь с пользователем
+    # Связь с пользователем и модели генерации
     user = relationship("User", backref="image_generations")
-    # model = relationship("GenerationModel", backref="image_generations")
+    model = relationship("GenerationModel", backref="image_generations")
 
 
-# class GenerationModel(Base):
-#     __tablename__ = 'generation_models'
-#
-#     id = Column(Integer, primary_key=True)
-#     name = Column(String, unique=True, nullable=False)  # Название модели (gpt-image-1, "neuroimg", "dall-e-2", "dall-e-3")
-#     token_cost = Column(Integer, nullable=False, default=1)  # Сколько токенов списывается за 1 генерацию
-#     is_active = Column(Boolean, default=True)  # Можно ли сейчас использовать модель
+class GenerationModel(Base):
+    __tablename__ = 'generation_models'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String, unique=True, nullable=False)  # Название модели (gpt-image-1, "neuroimg", "dall-e-3")
+    token_cost = Column(Integer, nullable=False, default=1)  # Сколько токенов списывается за 1 генерацию
+    is_active = Column(Boolean, default=True)  # Можно ли сейчас использовать модель
 
 

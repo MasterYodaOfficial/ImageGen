@@ -4,8 +4,10 @@ from bot.database.models import User, Payment, ImageGeneration
 from bot.database.session import get_session
 from datetime import datetime
 from bot.database.crud.crud_user import is_admin
+from bot.logger import logger
 
 async def admin_stats_command(message: Message):
+    logger.info(f"{message.from_user.id} {message.from_user.first_name}")
     if await is_admin(message.from_user):
         await message.answer("Загружаю...")
 

@@ -1,8 +1,7 @@
 from yookassa import Payment
 from functools import partial
 import asyncio
-from bot.utils.keys import YOOKASSA_SHOP_ID, YOOKASSA_SECRET_KEY
-from loguru import logger
+from bot.logger import logger
 from bot.utils.keys import BOT_NAME
 
 

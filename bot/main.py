@@ -1,6 +1,6 @@
 from utils.settings import run_bot
 import asyncio
-from loguru import logger
+from bot.logger import logger
 
 if __name__ == '__main__':
     try:
