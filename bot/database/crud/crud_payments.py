@@ -42,8 +42,8 @@ async def confirm_payment(payment_id: str):
         if not user or not tariff:
             return None
 
-        # Начисляем генерации
-        user.counter += tariff.generation_amount + (tariff.bonus_generations or 0)
+        # Начисляем токены
+        user.tokens += tariff.tokens_amount + (tariff.bonus_tokens or 0)
 
         await session.commit()
         return payment

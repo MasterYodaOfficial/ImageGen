@@ -13,13 +13,13 @@ from bot.handlers.for_admins.stats import admin_stats_command
 from aiogram.client.default import DefaultBotProperties
 from aiogram.filters import Command
 
-
-from bot.utils.keys import BOT_TOKEN, YOOKASSA_SECRET_KEY, YOOKASSA_SHOP_ID, KEY_OPENAI, KEY_IMAGE_GEN
+from bot.utils.keys import BOT_TOKEN, YOOKASSA_SECRET_KEY, YOOKASSA_SHOP_ID
 from bot.utils.commands import set_commands
 from bot.utils.utils import start_bot
 from bot.utils.statesforms import StepForm
 from bot.utils.throttling import ThrottlingMiddleware
 
+from bot.database.load_tariffs_models import load_tariffs, load_generation_models
 
 
 from yookassa import Configuration
@@ -34,6 +34,10 @@ bot = Bot(BOT_TOKEN, default=DefaultBotProperties(parse_mode='HTML'))
 
 
 async def run_bot() -> None:
+
+    # Подгружаем тарифы и модели для генерации с действующими расценками
+    await load_tariffs("database/tariffs.json")
+    await load_generation_models("database/generation_models.json")
 
     dp.message.filter(F.chat.type == "private")
     dp.startup.register(start_bot)
@@ -50,7 +54,6 @@ async def run_bot() -> None:
     dp.message.register(about_command, Command('about'))
     dp.message.register(admin_stats_command, Command('stats'))
 
-
     # Админская рассылка
     dp.message.register(broadcast_command, Command('broadcast'))
     dp.message.register(receive_broadcast_message, StepForm.WAITING_BROADCAST_MESSAGE)
@@ -65,7 +68,6 @@ async def run_bot() -> None:
     dp.callback_query.register(get_model_generation, StepForm.CHOOSING_MODEL)       # Принимает модель изображения
     dp.message.register(get_prompt, StepForm.ENTER_PROMPT)                          # Принимает промт
     dp.callback_query.register(get_confirm_generation, StepForm.CONFIRM_GENERATION) # Подтверждение генерации
-
 
     await set_commands(bot)
     logger.info('Запуск бота')

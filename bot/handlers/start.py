@@ -2,7 +2,7 @@ from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 from bot.database.session import get_session
 from bot.database.crud.crud_user import get_or_create_user
-from bot.utils.messages import start_text, start_text_trial
+from bot.utils.messages import start_text
 from bot.logger import logger
 
 
@@ -19,8 +19,8 @@ async def start_command(message: Message, state: FSMContext):
         start_msg = start_text.format(
             name=user.username
         )
-        if new: # Если пользователь новый ставим сообщение о 3 бесплатных генерациях
-            start_msg += start_text_trial
+        # if new: # Если пользователь новый ставим сообщение о 3 бесплатных генерациях
+        #     start_msg += start_text_trial
 
         # image = FSInputFile("utils/hipic.jpg")
         await message.answer(

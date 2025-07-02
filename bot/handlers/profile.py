@@ -4,7 +4,7 @@ from bot.database.session import get_session
 from bot.database.crud.crud_user import get_or_create_user, get_invited_count, get_total_referral_rewards
 from bot.utils.messages import profile_message # balance, referral_count, referral_bonus, user_code, bot_name
 from bot.keyboards.inlines import make_referral_button
-from bot.utils.keys import BOT_NAME
+from bot.utils.keys import BOT_NAME, DEFAULT_GIFT_TOKENS
 from bot.logger import logger
 
 
@@ -22,7 +22,8 @@ async def profile_command(message: Message, state: FSMContext):
                 referral_count=invited_count,
                 referral_bonus=total_referral_rewards,
                 user_code=user.referral_code,
-                bot_name=BOT_NAME
+                bot_name=BOT_NAME,
+                gift_tokens=DEFAULT_GIFT_TOKENS
             ),
             reply_markup=make_referral_button(
                 referral_link=f"https://t.me/{BOT_NAME}?start={user.referral_code}"

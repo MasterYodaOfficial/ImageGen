@@ -1,3 +1,13 @@
-BOT_TOKEN=token
+BOT_TOKEN=ENTER_TOKEN
+BOT_NAME=ENTER_BOT_NAME_EXAMPLE_TesterBot
+ADMIN_NAME=SeniorDeveloperPoper
+DEFAULT_GIFT_TOKENS=5
+
+
+KEY_IMAGE_GEN=Neuroart_APIKEY
+KEY_OPENAI=OPENAI_APIKEY
+
+YOOKASSA_SECRET_KEY=test_api_key
+YOOKASSA_SHOP_ID=your_shop_id
+
 DATABASE_URL=sqlite+aiosqlite:///./db.sqlite3
-BOT_NAME=namebot_for_link

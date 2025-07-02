@@ -36,7 +36,7 @@ def make_payment_buttons() -> InlineKeyboardMarkup:
     """Кнопки для выбора способа оплаты"""
     kb = InlineKeyboardBuilder()
     kb.button(text="💳 ЮKassa", callback_data="pay:yookassa")
-    kb.button(text="🪙 Крипта", callback_data="pay:crypto")
+    # kb.button(text="🪙 Крипта", callback_data="pay:crypto")
     kb.adjust(1)
     return kb.as_markup()
 
