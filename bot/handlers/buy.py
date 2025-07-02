@@ -13,7 +13,7 @@ from bot.database.crud.crud_payments import confirm_payment, error_payment
 from bot.logger import logger
 import asyncio
 import time
-
+from bot.database.crud.crud_generation_model import get_model_prices_text
 
 
 async def buy_command(message: Message, state: FSMContext):
@@ -22,9 +22,11 @@ async def buy_command(message: Message, state: FSMContext):
 
     logger.info(f"{message.from_user.id}, {message.from_user.first_name}")
     tariffs = await get_active_tariffs()
-
+    model_prices_text = await get_model_prices_text()
     await message.answer(
-        text=buy_message,
+        text=buy_message.format(
+            model_prices=model_prices_text
+        ),
         reply_markup=make_tariff_buttons(
             tariffs=tariffs
         )

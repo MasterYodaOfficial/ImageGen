@@ -1,6 +1,7 @@
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, SmallInteger, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, SmallInteger, ForeignKey, Float
 from sqlalchemy.orm import declarative_base, relationship
+
 
 
 Base = declarative_base()
@@ -59,7 +60,7 @@ class Tariff(Base):
     id = Column(String, primary_key=True)  # Например, "pack_100"
     title = Column(String, nullable=False)  # Название тарифа (например, "100 токенов")
     price_rub = Column(Integer, nullable=False)  # Цена в рублях
-    tokens_amount = Column(Integer, nullable=False)  # Сколько токенов входит в пакет
+    tokens_amount = Column(Integer, default=0)  # Сколько токенов входит в пакет
     bonus_tokens = Column(Integer, default=0)  # Бонусные токены (например, +10)
     is_active = Column(Boolean, default=True)  # Доступен ли тариф
     sort_order = Column(SmallInteger, default=0)  # Порядок отображения в списке
@@ -71,7 +72,7 @@ class Referral(Base):
     id = Column(Integer, primary_key=True)
     inviter_code = Column(String(20), ForeignKey('users.referral_code'), nullable=False) # Код пригласившего
     invited_user_id = Column(Integer, ForeignKey('users.id'), nullable=False) # id пользователя которого пригласил
-    reward_amount = Column(Integer, default=0)  # сколько бонусов выдали
+    reward_amount_tokens = Column(Integer, default=0)  # сколько бонусов выдали
     created_at = Column(DateTime, default=datetime.utcnow)
 
     inviter = relationship(
@@ -132,7 +133,7 @@ class GenerationModel(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String, unique=True, nullable=False)  # Название модели (gpt-image-1, "neuroimg", "dall-e-3")
-    token_cost = Column(Integer, nullable=False, default=1)  # Сколько токенов списывается за 1 генерацию
+    token_cost = Column(Integer, default=0)  # Сколько токенов списывается за 1 генерацию
     is_active = Column(Boolean, default=True)  # Можно ли сейчас использовать модель
 
 

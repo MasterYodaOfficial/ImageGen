@@ -29,7 +29,7 @@ class ImageModel(str, Enum):
     GPT_MEDIUM = "gpt-image-1-medium"
     GPT_HIGH = "gpt-image-1-high"
     DALLE = "dall-e-3"
-    # DALLE_HD = "dall-e-3-hd"
+    DALLE_HD = "dall-e-3-hd"
 
 
 class ImageGenerator:
@@ -98,12 +98,12 @@ class ImageGenerator:
                 "Dall-e-3",
                 ImageModel.DALLE.value,
                 "Флагманская модель от OpenAI. Обладает высоким качеством интерпретации текста и генерацией с отличной композицией"
-            )
-            # (
-            #     "Dall-e-3-hd",
-            #     ImageModel.DALLE_HD.value,
-            #     "Продвинутая версия DALL·E 3 с улучшенной детализацией и глубиной изображения. Подходит для иллюстраций и профессиональных задач."
-            # ),
+            ),
+            (
+                "Dall-e-3-hd",
+                ImageModel.DALLE_HD.value,
+                "Продвинутая версия DALL·E 3 с улучшенной детализацией и глубиной изображения. Подходит для иллюстраций и профессиональных задач."
+            ),
         ]
 
     async def generate(
@@ -123,8 +123,9 @@ class ImageGenerator:
                     return None
                 image_data = base64.b64decode(result)
                 return BufferedInputFile(image_data, filename="your_image.png")
-            if model in [ImageModel.DALLE]: # ImageModel.DALLE_HD пока нельзя
-                return await self._generate_dalle(prompt, mode, model.value)
+            if model in [ImageModel.DALLE, ImageModel.DALLE_HD]:
+                quality_param = self._get_dally_quality(model)
+                return await self._generate_dalle(prompt, mode, quality_param)
             return None
         except Exception as ex:
             logger.error(ex)
@@ -137,6 +138,15 @@ class ImageGenerator:
             return ImageQuality.medium.value
         if model == ImageModel.GPT_HIGH:
             return ImageQuality.high.value
+        logger.debug("Ошибка значения")
+        return None
+
+    def _get_dally_quality(self, model: ImageModel) -> str | None:
+        """Определяет качество для GPT-Image моделей"""
+        if model == ImageModel.DALLE:
+            return ImageQuality.standard.value
+        if model == ImageModel.DALLE_HD:
+            return ImageQuality.hd.value
         logger.debug("Ошибка значения")
         return None
 
@@ -175,17 +185,18 @@ class ImageGenerator:
             self,
             prompt: str,
             mode: ImageMode,
-            model: str
+            quality_param: str
     ) -> Optional[str]:
         """Генерация через DALL-E API"""
         size = self.get_image_size_dalle(mode)
         for attempt in range(2):
             try:
                 response = await self.openai_client.images.generate(
-                    model=model,
+                    model="dall-e-3",
                     prompt=prompt,
                     size=size,
-                    n=1
+                    n=1,
+                    quality=quality_param
                 )
                 return response.data[0].url
             except Exception as ex:

@@ -6,6 +6,7 @@ from bot.database.session import get_session
 from aiogram.types import User as TG_User
 import string
 import random
+from bot.utils.keys import DEFAULT_GIFT_TOKENS
 
 
 async def generate_unique_ref_code(session: AsyncSession, length: int = 8) -> str:
@@ -47,10 +48,10 @@ async def get_or_create_user(session: AsyncSession, tg_user: TG_User, referral_c
             referral = Referral(
                 inviter_code=referral_code,
                 invited_user_id=new_user.id,
-                reward_amount=10  # или выдай сразу бонус, если хочешь
+                reward_amount_tokens=DEFAULT_GIFT_TOKENS  # или выдай сразу бонус, если хочешь
             )
             session.add(referral)
-            inviter.counter += 10
+            inviter.tokens += DEFAULT_GIFT_TOKENS
             session.add(inviter)
     try:
         await session.commit()
@@ -71,7 +72,7 @@ async def get_invited_count(session: AsyncSession, referral_code: str) -> int:
 async def get_total_referral_rewards(session: AsyncSession, referral_code: str) -> int:
     """Функция возвращает кол-во накопленных бонусов(запросов) от приглашенных пользователей"""
     result = await session.execute(
-        select(func.sum(Referral.reward_amount)).where(Referral.inviter_code == referral_code)
+        select(func.sum(Referral.reward_amount_tokens)).where(Referral.inviter_code == referral_code)
     )
     total = result.scalar()
     return total or 0
@@ -104,7 +105,7 @@ async def has_available_generations(tg_user: TG_User) -> bool:
         counter = result.scalar_one_or_none()
         return counter is not None and counter > 0
 
-async def update_user_generations(tg_user: TG_User, delta: int) -> None:
+async def update_user_tokens(tg_user: TG_User, delta: int) -> None:
     """
     Обновляет количество генераций у пользователя.
     delta > 0 — добавить генерации
@@ -118,10 +119,10 @@ async def update_user_generations(tg_user: TG_User, delta: int) -> None:
         if not user:
             raise ValueError("Пользователь не найден")
 
-        if delta < 0 and user.counter + delta < 0:
+        if delta < 0 and user.tokens + delta < 0:
             raise ValueError("Недостаточно генераций")
 
-        user.counter += delta
+        user.tokens += delta
         session.add(user)
         await session.commit()
 

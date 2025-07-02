@@ -1,0 +1,50 @@
+[
+  {
+    "id": "pack_100",
+    "title": "100 токенов",
+    "price_rub": 100,
+    "tokens_amount": 100,
+    "bonus_tokens": 0,
+    "sort_order": 1
+  },
+  {
+    "id": "pack_300",
+    "title": "300 токенов",
+    "price_rub": 300,
+    "tokens_amount": 300,
+    "bonus_tokens": 0,
+    "sort_order": 2
+  },
+  {
+    "id": "pack_500",
+    "title": "500 токенов",
+    "price_rub": 500,
+    "tokens_amount": 500,
+    "bonus_tokens": 0,
+    "sort_order": 3
+  },
+  {
+    "id": "pack_1000",
+    "title": "1000 токенов",
+    "price_rub": 1000,
+    "tokens_amount": 1000,
+    "bonus_tokens": 0,
+    "sort_order": 4
+  },
+    {
+    "id": "pack_2500",
+    "title": "2500 токенов",
+    "price_rub": 2500,
+    "tokens_amount": 2500,
+    "bonus_tokens": 0,
+    "sort_order": 5
+  },
+      {
+    "id": "pack_5000",
+    "title": "5000 токенов",
+    "price_rub": 5000,
+    "tokens_amount": 5000,
+    "bonus_tokens": 0,
+    "sort_order": 6
+  }
+]
