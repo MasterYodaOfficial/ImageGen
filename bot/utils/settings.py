@@ -23,6 +23,7 @@ from bot.database.load_tariffs_models import load_tariffs, load_generation_model
 
 
 from yookassa import Configuration
+from pathlib import Path
 
 
 Configuration.account_id = YOOKASSA_SHOP_ID
@@ -30,14 +31,16 @@ Configuration.secret_key = YOOKASSA_SECRET_KEY
 dp = Dispatcher()
 bot = Bot(BOT_TOKEN, default=DefaultBotProperties(parse_mode='HTML'))
 
-
+BASE_DIR = Path(__file__).resolve().parent.parent
+tariffs_path = BASE_DIR / "database" / "tariffs.json"
+models_path = BASE_DIR / "database" / "generation_models.json"
 
 
 async def run_bot() -> None:
 
     # Подгружаем тарифы и модели для генерации с действующими расценками
-    await load_tariffs("database/tariffs.json")
-    await load_generation_models("database/generation_models.json")
+    await load_tariffs(str(tariffs_path))
+    await load_generation_models(str(models_path))
 
     dp.message.filter(F.chat.type == "private")
     dp.startup.register(start_bot)
