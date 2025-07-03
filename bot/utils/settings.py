@@ -8,6 +8,7 @@ from bot.handlers.generate import generate_command, get_format_image, get_prompt
 from bot.handlers.about import about_command
 from bot.handlers.for_admins.broadcast import broadcast_command, receive_broadcast_message, confirm_broadcast
 from bot.handlers.for_admins.stats import admin_stats_command
+from bot.handlers.for_admins.details import admin_details_command
 
 
 from aiogram.client.default import DefaultBotProperties
@@ -55,7 +56,10 @@ async def run_bot() -> None:
     dp.message.register(profile_command, Command('profile'))
     dp.message.register(generate_command, Command('generate'))
     dp.message.register(about_command, Command('about'))
+
+    #Админские команды
     dp.message.register(admin_stats_command, Command('stats'))
+    dp.message.register(admin_details_command, Command('details'))
 
     # Админская рассылка
     dp.message.register(broadcast_command, Command('broadcast'))
