@@ -75,7 +75,7 @@ async def get_prompt(message: Message, state: FSMContext):
 
     logger.info(f"{message.from_user.id}, {message.from_user.first_name}")
 
-    max_prompt_length = 500
+    max_prompt_length = 1500
     user_data = await state.get_data()
     prompt = message.text.strip()
 
