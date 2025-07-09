@@ -35,6 +35,7 @@ async def get_or_create_user(session: AsyncSession, tg_user: TG_User, referral_c
         telegram_id=tg_user.id,
         username=tg_user.first_name,
         referral_code=own_code,
+        tokens=DEFAULT_GIFT_TOKENS,
         invited_by_code=referral_code if referral_code else None
     )
     session.add(new_user)
