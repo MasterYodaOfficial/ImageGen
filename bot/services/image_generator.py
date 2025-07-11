@@ -200,7 +200,17 @@ class ImageGenerator:
                 )
                 return response.data[0].url
             except Exception as ex:
-                logger.error(f"DALL-E error (attempt {attempt + 1}): {ex}")
+                # Вытаскиваем тело ответа, если это HTTP-исключение от httpx
+                content = getattr(ex, 'response', None)
+                if content is not None:
+                    try:
+                        detail = await content.aread()
+                        logger.error(f"DALL-E error (attempt {attempt + 1}): {ex} | Response: {detail.decode('utf-8')}")
+                    except Exception as inner_ex:
+                        logger.error(
+                            f"DALL-E error (attempt {attempt + 1}): {ex} | (Failed to read response body: {inner_ex})")
+                else:
+                    logger.error(f"DALL-E error (attempt {attempt + 1}): {ex}")
         return None
 
     async def _generate_gpt_image(
@@ -222,7 +232,17 @@ class ImageGenerator:
                 )
                 return response.data[0].b64_json
             except Exception as ex:
-                logger.error(f"GPT-Image error (attempt {attempt + 1}): {ex}")
+                content = getattr(ex, 'response', None)
+                if content is not None:
+                    try:
+                        detail = await content.aread()
+                        logger.error(
+                            f"GPT-Image error (attempt {attempt + 1}): {ex} | Response: {detail.decode('utf-8')}")
+                    except Exception as inner_ex:
+                        logger.error(
+                            f"GPT-Image error (attempt {attempt + 1}): {ex} | (Failed to read response body: {inner_ex})")
+                else:
+                    logger.error(f"GPT-Image error (attempt {attempt + 1}): {ex}")
         return None
 
 
